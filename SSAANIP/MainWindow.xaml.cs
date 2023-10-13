@@ -42,17 +42,51 @@ namespace SSAANIP
             getRequest index = new("100.73.164.110:4533","admin","1.16","getIndexes","test");
             var result = await index.sendRequestAsync();
 
+            output.Content = result;
 
             if (result.Contains($"\"ok\""))
-            {
-                List<int> quoteLocation = new List<int>;
-                foreach (char i in result){
-                    if (i == '"'){
-                        quoteLocation.Append(i);
+            {                    
+                string key = string.Empty;
+                string value = string.Empty;
+                char[] resultlist = result.ToCharArray();
+                List<int> equalsLocation = new List<int>();
+                Dictionary<string, string> data = new Dictionary<string, string>();
+                for (int i = 0; i < resultlist.Count();i++){
+                    if (resultlist[i] == '='){
+                        equalsLocation.Add(i);
                     }
                 }
-                
+                output.Content = result;
+                for(int i = 0; i < equalsLocation.Count(); i++) {
+                    bool keyFlag = false;
+                    bool valueFlag = false;
+                    for (int j = 1; j < 100; j++)
+                    {
+                        if (result[equalsLocation[i] - j] != " ") {
+                            key.Prepend(result[equalsLocation[i] - j]);
+                            continue;
+                        }
+                        else
+                        {
+                            keyFlag = true;
+                        }
+                        if (result[equalsLocation[i]+j] != ' ')
+                        {
+                            value.Append(result[equalsLocation[i]+j]);
+                        }
+                        else
+                        {
+                            valueFlag = true;
+                        }
+                        if(keyFlag && valueFlag)
+                        {
+                            break;
+                        }
 
+                        continue;
+                    }
+                }
+                output.Content = data["id"]; 
 
             }
 
