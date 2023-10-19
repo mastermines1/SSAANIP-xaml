@@ -46,8 +46,7 @@ namespace SSAANIP
 
             if (result.Contains($"\"ok\""))
             {                    
-                string key = string.Empty;
-                string value = string.Empty;
+
                 char[] resultlist = result.ToCharArray();
                 List<int> equalsLocation = new List<int>();
                 Dictionary<string, string> data = new Dictionary<string, string>();
@@ -60,26 +59,40 @@ namespace SSAANIP
                 for(int i = 0; i < equalsLocation.Count(); i++) {
                     bool keyFlag = false;
                     bool valueFlag = false;
-                    for (int j = 1; j < 100; j++)
+                    string value = string.Empty;
+                    string key = string.Empty;
+                    for (int j = 1; j < 1000; j++)
                     {
-                        if (result[equalsLocation[i] - j] != " ") {
-                            key.Prepend(result[equalsLocation[i] - j]);
-                            continue;
-                        }
-                        else
+                        if (!keyFlag)
                         {
-                            keyFlag = true;
+                            if (result[equalsLocation[i] - j] != ' ' && result[equalsLocation[i] - j] != '<')
+                            {
+                                key = (result[equalsLocation[i] - j]) + key;
+                                continue;
+                            }
+                            else
+                            {
+                                keyFlag = true;
+                                break;
+                            }
+                            break;
                         }
-                        if (result[equalsLocation[i]+j] != ' ')
-                        {
-                            value.Append(result[equalsLocation[i]+j]);
+                    }
+                    for (int j = 1; j <1000; j++) { 
+                        if(!valueFlag){
+                            if (result[equalsLocation[i]+1+j] != '\"')
+                            {
+                                value = value+result[equalsLocation[i]+1+j];
+                            }
+                            else
+                            {
+                                valueFlag = true;
+                            }
                         }
-                        else
-                        {
-                            valueFlag = true;
-                        }
+
                         if(keyFlag && valueFlag)
                         {
+                            data.Add(key, value);
                             break;
                         }
 
