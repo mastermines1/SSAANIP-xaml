@@ -3,6 +3,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.IO;
 using System;
+using System.Xml;
+using System.Linq;
+using System.Windows.Documents;
+using System.Xml.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace SSAANIP{
     public class getRequest{
@@ -31,7 +37,7 @@ namespace SSAANIP{
             this.extraParms = extraParms;        
         }
 
-        public async Task<string> sendRequestAsync(){
+        public async Task<IEnumerable<XElement>> sendRequestAsync(){
             string password = string.Empty;
             MD5 md5 = MD5.Create();
             try{
@@ -52,8 +58,22 @@ namespace SSAANIP{
 
             using HttpResponseMessage responseMessage = await client.GetAsync(url);
             responseMessage.EnsureSuccessStatusCode();
-			string data = await responseMessage.Content.ReadAsStringAsync();
-            return data;
+            XmlDocument data = new XmlDocument();
+            string output = (await responseMessage.Content.ReadAsStringAsync());
+            string cleanOutput = string.Empty;
+            foreach (char c in output)
+            {
+                if (c == '\\')
+                {}
+                else
+                {
+                    cleanOutput += c;
+                }
+            }
+            XDocument xele = XDocument.Parse(cleanOutput);
+            IEnumerable<XElement> collection = xele.Elements();
+
+            return collection;
         }
 
 
