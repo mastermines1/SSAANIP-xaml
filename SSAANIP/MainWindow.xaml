@@ -5,18 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SSAANIP"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" ResizeMode="CanMinimize" Background="#FF1F1B24" Foreground="White">
+    <Window.Style>
+        <Style/>
+    </Window.Style>
     <Grid Margin="10,10,10,-6">
-        <ListBox HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" Visibility="Visible" Name="lbSettings">
-            <Label Content="Settings" FontWeight="Bold" FontSize="14"></Label>
-            <Button Background="White" BorderBrush="White" Content="Theme" Click="showTheme" Width="77" />
-            <ListBox HorizontalAlignment="Left" Margin="0,0,0,0" Width="80" Name="lbTheme" Visibility="Collapsed">
-                <Button Content="Dark" Background="White" BorderBrush="White"></Button>
-                <Button Content="Light" Background="White" BorderBrush="White"></Button>
-            </ListBox>
+
+
+        <ListBox HorizontalAlignment="Left" Margin="0,33,0,0" VerticalAlignment="Top" Width="100" Visibility="Collapsed" Name="lbSettings" BorderThickness="0,0,0,0">
+            <Button Background="White" BorderBrush="White" Content="Theme" Click="changeTheme" Width="77" />
 
         </ListBox>
-        <Label Name="output" Content="Label" HorizontalAlignment="Left" Height="211" Margin="-11,209,0,0" VerticalAlignment="Top" Width="1410"/>
-        <Button Content="Button" HorizontalAlignment="Left" Height="52" Margin="226,131,0,0" VerticalAlignment="Top" Width="91" Click="Button_Click"/>
+        <Label Name="output" Content="Label" HorizontalAlignment="Left" Height="211" Margin="-11,209,0,0" VerticalAlignment="Top" Width="1410" Grid.ColumnSpan="3"/>
+        <Button Content="Button" HorizontalAlignment="Left" Height="52" Margin="74,131,0,0" VerticalAlignment="Top" Width="91" Click="Button_Click" Grid.Column="1"/>
+        <Button FontWeight="Bold" FontSize="14" Click="showSettings"  Background="White" BorderBrush="White" Margin="0,3,0,0" Content="Settings" Height="30" Width="85" HorizontalAlignment="Left" VerticalAlignment="Top" Panel.ZIndex="-1"/>
     </Grid>
 </Window>
