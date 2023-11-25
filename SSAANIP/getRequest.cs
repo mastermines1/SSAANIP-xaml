@@ -11,7 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace SSAANIP{
-    public class getRequest{
+    public class Request{
         private string socket;  //the socket that the subsonic server is located at
 		private string username; //the username that the user is logged in with
 		private string version; //the version of the server
@@ -21,14 +21,15 @@ namespace SSAANIP{
         private string extraParms;
         
         
-        public getRequest(string socket,string username,string version,string request,string clientName){
+        public Request(string socket,string username,string version,string request,string clientName){
             this.socket = socket;
             this.username = username;
             this.version = version;
             this.request = request;
             this.clientName = clientName;
+            this.extraParms = "";
         }
-        public getRequest(string socket,string username,string version,string request,string clientName,string extraParms){
+        public Request(string socket,string username,string version,string request,string clientName,string extraParms){
             this.socket = socket;
             this.username = username;
             this.version = version;
@@ -63,10 +64,7 @@ namespace SSAANIP{
             string cleanOutput = string.Empty;
             foreach (char c in output)
             {
-                if (c == '\\')
-                {}
-                else
-                {
+                if (c != '\\'){
                     cleanOutput += c;
                 }
             }
