@@ -1,0 +1,15 @@
+﻿<Window x:Class="SSAANIP.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SSAANIP"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" ResizeMode="CanMinimize" Background="#FF1F1B24" Foreground="White">
+    <Window.Style>
+        <Style/>
+    </Window.Style>
+    <Grid Margin="10,10,10,-6">
+        
+    </Grid>
+</Window>
