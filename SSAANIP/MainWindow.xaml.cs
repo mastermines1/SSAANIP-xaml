@@ -23,12 +23,20 @@ namespace SSAANIP
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window{
-
+        public string socket;
+        public string username;
+        public string version;
+        public string appName;
+        readonly RequestMethods req;
 
         public MainWindow(){
 
             InitializeComponent();
-
+            socket = "100.73.164.110:4533";
+            username = "admin";
+            version = "1.16";
+            appName = "test";
+            req = new(socket, username, version, appName);
         }
 
         private void changeTheme(object sender, RoutedEventArgs e) {
@@ -54,126 +62,21 @@ namespace SSAANIP
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            Request index = new("100.73.164.110:4533","admin","1.16","getArtist", "test","&id=61dbf9c1dc2a19880b44ed9fc93be334" );
-            var xmlDoc = await index.sendRequestAsync();
+            IEnumerable<XElement> xmlDoc = await req.sendGetIndexes();
             
-            foreach(XElement element in xmlDoc.Elements().Elements())
+            foreach(XElement element in xmlDoc.Elements().Elements().Elements())
             {
-                   
-            }
 
-
-            /* if (result.Contains($"\"ok\""))
-            {                    
-
-                char[] resultlist = result.ToCharArray();
-                List<int> equalsLocation = new List<int>();
-                Dictionary<string, string> data = new Dictionary<string, string>();
-                for (int i = 0; i < resultlist.Count();i++){
-                    if (resultlist[i] == '='){
-                        equalsLocation.Add(i);
-                    }
-                }
-                output.Content = result;
-                for(int i = 0; i < equalsLocation.Count(); i++) {
-                    bool keyFlag = false;
-                    bool valueFlag = false;
-                    string value = string.Empty;
-                    string key = string.Empty;
-                    for (int j = 1; j < 1000; j++)
+                foreach(XAttribute attribute in element.Attributes())
+                {
+                    if(attribute.Name == "id")
                     {
-                        if (!keyFlag)
-                        {
-                            if (result[equalsLocation[i] - j] != ' ' && result[equalsLocation[i] - j] != '<')
-                            {
-                                key = (result[equalsLocation[i] - j]) + key;
-                                continue;
-                            }
-                            else
-                            {
-                                keyFlag = true;
-                                break;
-                            }
-                            break;
-                        }
-                    }
-                    for (int j = 1; j <1000; j++) { 
-                        if(!valueFlag){
-                            if (result[equalsLocation[i]+1+j] != '\"')
-                            {
-                                value = value+result[equalsLocation[i]+1+j];
-                            }
-                            else
-                            {
-                                valueFlag = true;
-                            }
-                        }
-                        
-                        if(keyFlag && valueFlag)
-                        {
-                            data.Add(key, value);
-                            break;
-                        }
+                        string id = attribute.Value;
 
-                        continue;
+                        var xml = await req.Browsing("getArtist",id);
                     }
                 }
-                output.Content = data["id"]; 
-
-            } */
-
-
-
-
-            //string id = 
-
-            //getRequest directory = new("100.73.164.110:4533", "admin", "1.16", "getMusicDirectory", "test", $"id=\"{id}\"");
-
-
-            //165142354302
-
-        }
-
-
-
-        public async Task<IEnumerable<XElement>> System(string requestType)
-        {
-            Request request = new("100.73.164.110:4533", "admin", "1.16", requestType, "test");
-            return await request.sendRequestAsync();
-
-        }
-        public async Task<IEnumerable<XElement>> Browsing(string requestType,string id)
-        {
-            if (id != null){
-                id = $"&id={id}";
             }
-            Request request = new("100.73.164.110:4533", "admin", "1.16", requestType, "test",id);
-            return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendCreatePlaylist(string name, string[] songId)
-        {
-            string extras = $"&name={name}";
-            foreach (string sID in songId){
-                extras += $"&songID={sID}";
-            }
-            Request request = new("100.73.164.110:4533", "admin", "1.16", "createPlaylist", "test",extras);
-            return await request.sendRequestAsync();
-        }
-        public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex)
-        {
-            string extras = string.Empty;
-            if (name != null){
-                extras += $"&name={name}";
-            }
-            else if (comment != null){
-                extras += $"&comment={comment}";
-            }
-
-            Request request = new("100.73.164.110:4533", "admin", "1.16", "updatePlaylist", "test", extras);
-            return await request.sendRequestAsync();
-
-        }
-
-
     }
 }
