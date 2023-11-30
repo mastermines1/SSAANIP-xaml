@@ -19,3 +19,7 @@ C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\refint\SSAA
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.pdb
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.genruntimeconfig.cache
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\ref\SSAANIP.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\login.g.cs
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\master.g.cs
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\login.baml
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\master.baml
