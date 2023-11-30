@@ -22,30 +22,22 @@ namespace SSAANIP
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window{
+    public partial class MainWindow : Page{
         public string socket;
         public string username;
         public string version;
         public string appName;
         readonly RequestMethods req;
-
-        public MainWindow(){
+        public master parent;
+        public MainWindow(master master){
 
             InitializeComponent();
+            parent = master;
             socket = "100.73.164.110:4533";
             username = "admin";
             version = "1.16";
             appName = "test";
             req = new(socket, username, version, appName);
-        }
-
-        private void changeTheme(object sender, RoutedEventArgs e) {
-            if(this.Background == Brushes.White) {
-                this.Background = Brushes.Black; // "#1F1B24";
-            }
-            else{
-                this.Background = Brushes.White;
-            }
         }
 
         private void showSettings(object sender, RoutedEventArgs e)
@@ -77,6 +69,11 @@ namespace SSAANIP
                     }
                 }
             }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            parent.Frame.Content = new loginPage(parent);
         }
     }
 }
