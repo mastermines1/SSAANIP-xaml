@@ -61,7 +61,7 @@ namespace SSAANIP {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SSAANIP;component/master.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SSAANIP;V1.0.0.0;component/master.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\master.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

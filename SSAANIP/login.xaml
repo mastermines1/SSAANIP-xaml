@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:SSAANIP"
         mc:Ignorable="d" d:DesignHeight="414" d:DesignWidth="865">
     <Grid Width="865" Height="414" Background="White">
-        <Button Content="Login" HorizontalAlignment="Left" Height="32" Margin="80,175,0,0" VerticalAlignment="Top" Width="139" Click="login"/>
+        <Button Content="Login" HorizontalAlignment="Left" Height="32" Margin="80,173,0,0" VerticalAlignment="Top" Width="139" Click="login"/>
         <Label HorizontalAlignment="Left" Height="28" Margin="80,51,0,0" VerticalAlignment="Top" Width="103" Content="Username"/>
-        <Label Content="Password" HorizontalAlignment="Left" Height="31" Margin="80,107,0,0" VerticalAlignment="Top" Width="103" />
+        <Label Content="Password" HorizontalAlignment="Left" Height="26" Margin="80,107,0,0" VerticalAlignment="Top" Width="103" />
         <TextBox HorizontalAlignment="Left" Height="23" Margin="80,79,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="139" Name="usrBox"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="80,138,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="139" Name="pwdBox"/>
+        <PasswordBox HorizontalAlignment="Left" Height="23" Margin="80,138,0,0" VerticalAlignment="Top" Width="139"  Name="pwdBox" />
         <Label Content="" HorizontalAlignment="Left" Height="57" Margin="80,254,0,0" VerticalAlignment="Top" Width="139" Name="output"/>
 
     </Grid>
