@@ -46,30 +46,28 @@ namespace SSAANIP
             Request request = new(socket, username, version, "createPlaylist", appName, extras);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex)
-        {
+        public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex){
             string extras = string.Empty;
-            if (name != null)
-            {
+            if (name != null){
                 extras += $"&name={name}";
             }
-            else if (comment != null)
-            {
+            else if (comment != null){
                 extras += $"&comment={comment}";
             }
             Request request = new(socket, username, version, "updatePlaylist", appName, extras);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendGetIndexes()
-        {
+        public async Task<IEnumerable<XElement>> sendGetIndexes(){
             Request request = new(socket, username, version, "getIndexes", appName);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
 
         }
-
+        public async Task<IEnumerable<XElement>> sendGetUser(string username){
+            Request request = new(socket,username, version, "getUser", appName);
+            IEnumerable<XElement> output = await request.sendRequestAsync();
+            return output;
+        }
 
     }
-
-
 }

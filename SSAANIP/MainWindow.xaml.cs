@@ -29,28 +29,18 @@ namespace SSAANIP
         public string appName;
         readonly RequestMethods req;
         public master parent;
-        public MainWindow(master master){
+        public MainWindow(master master,string username){
 
             InitializeComponent();
             parent = master;
             socket = "100.73.164.110:4533";
-            username = "admin";
+            username = username;
             version = "1.16";
             appName = "test";
             req = new(socket, username, version, appName);
         }
 
-        private void showSettings(object sender, RoutedEventArgs e)
-        {
-           if (lbSettings.Visibility == Visibility.Visible)
-            {
-                lbSettings.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                lbSettings.Visibility = Visibility.Visible;
-            }
-        }
+
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
