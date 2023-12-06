@@ -1,0 +1,2 @@
+socket=100.73.164.110:4533
+appName=test
