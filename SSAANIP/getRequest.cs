@@ -1,14 +1,10 @@
-using System.Security.Cryptography;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.IO;
-using System;
 using System.Xml;
-using System.Linq;
-using System.Windows.Documents;
 using System.Xml.Linq;
-using System.Collections;
 using System.Collections.Generic;
+using System.Data.SQLite;
 
 namespace SSAANIP{
     public class Request{
@@ -19,67 +15,73 @@ namespace SSAANIP{
         private string clientName; //the name of the client in use
         private HttpClient client = new HttpClient();
         private string extraParms;
+        private string authToken;
+        private string salt;
+        SQLiteConnection conn;
         
         
-        public Request(string socket,string username,string version,string request,string clientName){
-            this.socket = socket;
+        public Request(string username, string request){
+            conn = new SQLiteConnection("Data source=usrDB.db");
+            this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
             this.username = username;
-            this.version = version;
+            this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
             this.request = request;
-            this.clientName = clientName;
+            this.clientName = File.ReadAllLines("config.txt")[1].Split("=")[1];
             this.extraParms = "";
+            conn.Open();
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT passHash,Salt FROM tblUsers WHERE Username = @u";
+            cmd.Parameters.Add(new SQLiteParameter("@u", username));
+            using (var reader = cmd.ExecuteReader()){
+                this.authToken = reader.GetString(0);
+                this.salt = reader.GetString(1);
+            }
+            conn.Close();
         }
-        public Request(string socket,string username,string version,string request,string clientName,string extraParms){
-            this.socket = socket;
+        public Request(string username, string request, string extraParms){
+            conn = new SQLiteConnection("Data source=usrDB.db");
+            this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
             this.username = username;
-            this.version = version;
+            this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
             this.request = request;
-            this.clientName = clientName;
-            this.extraParms = extraParms;        
+            this.clientName = File.ReadAllLines("config.txt")[1].Split("=")[1];
+            this.extraParms = extraParms;
+            conn.Open();
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT passHash,Salt FROM tblUsers WHERE Username = @u";
+            cmd.Parameters.Add(new SQLiteParameter("@u", username));
+            using (var reader = cmd.ExecuteReader()){
+                this.authToken = reader.GetString(0);
+                this.salt = reader.GetString(1);
+            }
+            conn.Close();
+        }
+        public Request(string username, string request, string authToken, string salt){
+            conn = new SQLiteConnection("");
+            this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
+            this.username = username;
+            this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
+            this.request = request;
+            this.clientName = File.ReadAllLines("config.txt")[1].Split("=")[1];
+            this.extraParms = extraParms;
+            this.authToken = authToken;
+            this.salt = salt;
+
         }
 
         public async Task<IEnumerable<XElement>> sendRequestAsync(){
-            string password = string.Empty;
-            MD5 md5 = MD5.Create();
-            try{
-				password = File.ReadAllText("password.txt");
-			}
-			catch{
-				Console.WriteLine("No password file found");
 
-			}
-            string salt = createSalt(16);
-
-			byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(password+salt);
-			byte[] hashed = md5.ComputeHash(inputBytes);
-			string authToken = Convert.ToHexString(hashed).ToLower();
-
-            string url = $@"http://{socket}/rest/{request}?u={username}&t={authToken}&s={salt}&v={version}&c={client}{extraParms}";
+            string url = $@"http://{socket}/rest/{request}?u={username}&t={authToken}&s={salt}&v={version}&c={clientName}{extraParms}";
 
 
             using HttpResponseMessage responseMessage = await client.GetAsync(url);
             responseMessage.EnsureSuccessStatusCode();
             XmlDocument data = new XmlDocument();
             string output = (await responseMessage.Content.ReadAsStringAsync());
-            string cleanOutput = string.Empty;
-            foreach (char c in output)
-            {
-                if (c != '\\'){
-                    cleanOutput += c;
-                }
-            }
-            XDocument xele = XDocument.Parse(cleanOutput);
+            XDocument xele = XDocument.Parse(output);
             IEnumerable<XElement> collection = xele.Elements();
 
             return collection;
         }
-
-
-		public static string createSalt(int size){ //generates a salt of set size TO-DO make custom one
-			RandomNumberGenerator rng = RandomNumberGenerator.Create();
-			byte[] salt = new byte[size];
-			rng.GetBytes(salt);
-			return Convert.ToHexString(salt);
-		}
     }
 }
