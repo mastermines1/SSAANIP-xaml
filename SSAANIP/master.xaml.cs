@@ -2,7 +2,6 @@
 
 namespace SSAANIP
 {
-
     public partial class master : Window{
 
         public master(){

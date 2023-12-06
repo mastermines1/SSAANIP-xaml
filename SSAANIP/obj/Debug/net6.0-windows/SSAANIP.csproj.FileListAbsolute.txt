@@ -23,3 +23,9 @@ C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\login.g.cs
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\master.g.cs
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\login.baml
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\master.baml
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\System.Data.SQLite.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\runtimes\linux-x64\native\SQLite.Interop.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\runtimes\osx-x64\native\SQLite.Interop.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\runtimes\win-x64\native\SQLite.Interop.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\runtimes\win-x86\native\SQLite.Interop.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.csproj.CopyComplete
