@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.IO;
 
 namespace SSAANIP
 {
@@ -7,7 +8,15 @@ namespace SSAANIP
         public master(){
             InitializeComponent();
 
-            Frame.Content = new loginPage(this);
+            if (File.ReadAllLines("config.txt")[0].Split("=")[1] == "")
+            {
+                Frame.Content = new SocketPage(this);
+            }
+            else
+            {
+                Frame.Content = new loginPage(this);
+            }
+
         }
     }
 }

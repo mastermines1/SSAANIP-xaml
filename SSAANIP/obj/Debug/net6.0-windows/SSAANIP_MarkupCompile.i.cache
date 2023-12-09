@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\App.xaml
-370200387
+4-430779669
 
-91104804096
+11-123022348
 195754740058
-login.xaml;MainWindow.xaml;master.xaml;
+login.xaml;MainWindow.xaml;master.xaml;socketPage.xaml;
 
-False
+True
 
