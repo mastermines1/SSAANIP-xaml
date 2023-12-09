@@ -1,2 +1,3 @@
 socket=100.73.164.110:4533
-appName=test
+appName=DefaultName
+version=1.16.1
