@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SSAANIP"
-        mc:Ignorable="d">
+        mc:Ignorable="d" Background="White">
 
     <Grid Width="865" Height="414">
-
+        <ListBox Name="lsArtist" HorizontalAlignment="Left" Height="119" Margin="55,88,0,0" VerticalAlignment="Top" Width="114" SelectionChanged="getAlbums"/>
+        <ListBox x:Name="lsAlbums" HorizontalAlignment="Left" Height="119" Margin="184,88,0,0" VerticalAlignment="Top" Width="114"/>
     </Grid>
 </Page>

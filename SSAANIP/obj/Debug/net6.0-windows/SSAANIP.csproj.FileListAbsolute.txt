@@ -29,3 +29,5 @@ C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\runtimes\os
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\runtimes\win-x64\native\SQLite.Interop.dll
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\runtimes\win-x86\native\SQLite.Interop.dll
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.csproj.CopyComplete
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\Socketpage.g.cs
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\obj\Debug\net6.0-windows\Socketpage.baml

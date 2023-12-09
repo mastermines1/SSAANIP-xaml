@@ -1,0 +1,24 @@
+﻿<Page x:Class="SSAANIP.SocketPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SSAANIP"
+        mc:Ignorable="d" Background="White">
+
+    <Grid Width="865" Height="414">
+
+
+        <Button Content="Button" HorizontalAlignment="Left" Margin="375,248,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.425,2.751" Click="Button_Click"/>
+        <Label Content="Please enter the socket your server is hosted on:" HorizontalAlignment="Left" Height="54" Margin="249,0,0,0" VerticalAlignment="Center" Width="292"/>
+        <TextBox HorizontalAlignment="Left" Height="24" Margin="334,219,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="118" Name="socketBox"/>
+        <Label Name="outputlbl" HorizontalAlignment="Left" Height="26" Margin="320,288,0,0" VerticalAlignment="Top" Width="147"/>
+        <Label Content="App name:" HorizontalAlignment="Left" Height="40" Margin="629,167,0,0" VerticalAlignment="Top" Width="145"/>
+        <TextBox Name="namebox" HorizontalAlignment="Left" Height="29" Margin="702,167,0,0" TextWrapping="Wrap" Text="DefaultName" VerticalAlignment="Top" Width="82"/>
+        <Label HorizontalAlignment="Left" Height="67" Margin="642,219,0,0" VerticalAlignment="Top" Width="142">
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Allows the server to identify your client.Can be changed in config.txt" VerticalAlignment="Top"/>
+        </Label>
+
+
+    </Grid>
+</Page>

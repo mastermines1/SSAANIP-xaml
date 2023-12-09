@@ -1,49 +1,34 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace SSAANIP
-{
-    public class RequestMethods //different requests
-    {
-        public string socket;
+namespace SSAANIP{
+    public class RequestMethods{ //different requests
         public string username;
-        public string version;
-        public string appName;
-
-        public RequestMethods(string socket, string username, string version, string appName)
+        public string password;
+        public RequestMethods(string username, string password)
         {
-            this.socket = socket;
             this.username = username;
-            this.version = version;
-            this.appName = appName;
-
+            this.password = password;
         }
-        public async Task<IEnumerable<XElement>> System(string requestType)
-        {
-            Request request = new(socket, username, version, requestType, appName);
+        public async Task<IEnumerable<XElement>> System(string requestType){
+            Request request = new(username, password, requestType);
             return await request.sendRequestAsync();
             
         }
-        public async Task<IEnumerable<XElement>> Browsing(string requestType, string id)
-        {
-            if (id != null)
-            {
+        public async Task<IEnumerable<XElement>> Browsing(string requestType, string id){
+            if (id != null){
                 id = $"&id={id}";
             }
-            Request request = new(socket, username, version, requestType, appName, id);
+            Request request = new(username,password, requestType, id);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendCreatePlaylist(string name, string[] songId)
-        {
+        public async Task<IEnumerable<XElement>> sendCreatePlaylist(string name, string[] songId){
             string extras = $"&name={name}";
-            foreach (string sID in songId)
-            {
+            foreach (string sID in songId){
                 extras += $"&songID={sID}";
             }
-            Request request = new(socket, username, version, "createPlaylist", appName, extras);
+            Request request = new(username, password, "createPlaylist", extras);
             return await request.sendRequestAsync();
         }
         public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex){
@@ -54,20 +39,25 @@ namespace SSAANIP
             else if (comment != null){
                 extras += $"&comment={comment}";
             }
-            Request request = new(socket, username, version, "updatePlaylist", appName, extras);
+            Request request = new(username, password, "updatePlaylist", extras);
             return await request.sendRequestAsync();
         }
         public async Task<IEnumerable<XElement>> sendGetIndexes(){
-            Request request = new(socket, username, version, "getIndexes", appName);
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
-
-        }
-        public async Task<IEnumerable<XElement>> sendGetUser(string username){
-            Request request = new(socket,username, version, "getUser", appName);
+            Request request = new(username, password, "getIndexes");
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-
+        public async Task<IEnumerable<XElement>> sendGetAlbum(string id)
+        {
+            Request request = new(username, password, "getAlbum", "&id="+id);
+            IEnumerable<XElement> output = await request.sendRequestAsync();
+            return output;
+        }
+        public async Task<IEnumerable<XElement>> sendGetArtist(string id)
+        {
+            Request request = new(username, password, "getArtist", "&id=" + id);
+            IEnumerable<XElement> output = await request.sendRequestAsync();
+            return output;
+        }
     }
 }
