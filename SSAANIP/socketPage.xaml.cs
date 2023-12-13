@@ -2,15 +2,12 @@
 using System.Windows.Controls;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace SSAANIP{
     public partial class SocketPage : Page{
         public master parent;
         public SocketPage(master master){
-
             InitializeComponent();
-
             this.parent = master;
         }
 
