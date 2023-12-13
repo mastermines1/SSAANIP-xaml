@@ -14,9 +14,9 @@ namespace SSAANIP{
         public master parent;
         private string password;
         public Dictionary<string, string> availableArtists = new();
-        public Dictionary<string,string> availableAlbums = new();
+        public Dictionary<string,Dictionary<string,string>> availableAlbums = new();
         public MainWindow(master master, string username, string password){
-        InitializeComponent();
+            InitializeComponent();
             parent = master;
             this.username = username;
             this.password = password;
@@ -45,9 +45,16 @@ namespace SSAANIP{
             string artistID = availableArtists[selectedArtist];
             var artistData = await req.sendGetArtist(artistID);
             foreach (XElement element in artistData.Elements().Elements()){
-                availableAlbums.Add(element.Attributes().First().NextAttribute.NextAttribute.NextAttribute.NextAttribute.Value, element.Attributes().First().Value);
+                Dictionary<string, string> albumdata = new();
+                albumdata.Add(element.Attributes().First().NextAttribute.NextAttribute.NextAttribute.NextAttribute.Value, element.Attributes().First().Value);
+                availableAlbums.Add(selectedArtist,albumdata);
             }
-            lsAlbums.ItemsSource = this.availableAlbums.Keys;
+
+
+
+
+
+            lsAlbums.ItemsSource = this.availableAlbums.Values;
         }
     }
 }

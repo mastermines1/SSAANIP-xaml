@@ -1,7 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -27,7 +26,7 @@ namespace SSAANIP{
             this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
             this.request = request;
             this.clientName = File.ReadAllLines("config.txt")[1].Split("=")[1];
-            this.extraParms = extraParms;
+            this.extraParms = "";
             this.password = password;
         }
         public Request(string username, string password, string request, string extraParms){
@@ -40,14 +39,13 @@ namespace SSAANIP{
             this.extraParms = extraParms;
             this.password = password;
         }
-        public Request(string username, string password, string request, string socket, string extraParms)
-        {
+        public Request(string username, string password, string request, string socket, string extraParms){
             conn = new SQLiteConnection("");
             this.socket = socket;
             this.username = username;
-            this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
+            this.version = "";
             this.request = request;
-            this.clientName = File.ReadAllLines("config.txt")[1].Split("=")[1];
+            this.clientName = "SocketTest";
             this.extraParms = extraParms;
             this.password = password;
 
