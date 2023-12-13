@@ -1,2 +1,3 @@
-/SSAANIP/bin/Debug/net6.0-windows/password.txt
-/SSAANIP/obj/*
+/SSAANIP/bin/Debug/net6.0-windows/config.txt
+/SSAANIP/obj/**
+/SSAANIP/.vs/**
