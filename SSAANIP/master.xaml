@@ -7,5 +7,5 @@
         mc:Ignorable="d"
         Title="master" Width="865" Height="414" ResizeMode="CanResize" Background="White" Foreground="Black">
     
-    <Frame Name="Frame" ></Frame>
+    <Frame Name="Frame" NavigationUIVisibility="Hidden" ></Frame>
 </Window>
