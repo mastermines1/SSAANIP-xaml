@@ -1,15 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "9DYZY73aXjqmHBUwbYyFJLkGsyiasuV+b3/CZ3K2nxcOf7X9nRGRFBvYTxF2TutyWIqEkqLMf0WPRUbWwhihQQ==",
+  "dgSpecHash": "jIe1NA6WEv6NjNVN7ijPtnDqQebk7GtYIICjVdmHiQObl3DiCft0C8BybbI6ltSDnFuKwPlhEfYdvRgDsCJp9w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Miles_Campbell\\Source\\Repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\SSAANIP.csproj",
+  "projectFilePath": "C:\\Users\\Miles\\source\\repos\\SSAANIP\\SSAANIP\\SSAANIP.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Miles_Campbell\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.118\\stub.system.data.sqlite.core.netstandard.1.0.118.nupkg.sha512",
-    "C:\\Users\\Miles_Campbell\\.nuget\\packages\\system.data.sqlite.core\\1.0.118\\system.data.sqlite.core.1.0.118.nupkg.sha512",
-    "C:\\Users\\Miles_Campbell\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
-    "C:\\Users\\Miles_Campbell\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
-    "C:\\Users\\Miles_Campbell\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512",
-    "C:\\Users\\Miles_Campbell\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.25\\microsoft.netcore.app.host.win-x64.6.0.25.nupkg.sha512"
+    "C:\\Users\\Miles\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.118\\stub.system.data.sqlite.core.netstandard.1.0.118.nupkg.sha512",
+    "C:\\Users\\Miles\\.nuget\\packages\\system.data.sqlite.core\\1.0.118\\system.data.sqlite.core.1.0.118.nupkg.sha512"
   ],
   "logs": []
 }
