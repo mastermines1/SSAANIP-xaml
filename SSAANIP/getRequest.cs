@@ -14,7 +14,7 @@ namespace SSAANIP{
 		private string version; //the version of the server
         private string request; //the type of request
         private string clientName; //the name of the client in use
-        private HttpClient client = new HttpClient();
+        private HttpClient client = new();
         private string extraParms;
         private string password;
         SQLiteConnection conn;
@@ -65,7 +65,6 @@ namespace SSAANIP{
             IEnumerable<XElement> collection = XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
             return collection;
         }
-
         public static string createSalt(int size){ //generates a salt of set size 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] salt = new byte[size];
