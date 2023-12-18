@@ -8,10 +8,19 @@
     ".NETCoreApp,Version=v6.0": {
       "SSAANIP/1.0.0": {
         "dependencies": {
+          "NAudio.Core": "2.2.1",
           "System.Data.SQLite.Core": "1.0.118"
         },
         "runtime": {
           "SSAANIP.dll": {}
+        }
+      },
+      "NAudio.Core/2.2.1": {
+        "runtime": {
+          "lib/netstandard2.0/NAudio.Core.dll": {
+            "assemblyVersion": "2.2.1.0",
+            "fileVersion": "2.2.1.0"
+          }
         }
       },
       "Stub.System.Data.SQLite.Core.NetStandard/1.0.118": {
@@ -56,6 +65,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "NAudio.Core/2.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GgkdP6K/7FqXFo7uHvoqGZTJvW4z8g2IffhOO4JHaLzKCdDOUEzVKtveoZkCuUX8eV2HAINqi7VFqlFndrnz/g==",
+      "path": "naudio.core/2.2.1",
+      "hashPath": "naudio.core.2.2.1.nupkg.sha512"
     },
     "Stub.System.Data.SQLite.Core.NetStandard/1.0.118": {
       "type": "package",
