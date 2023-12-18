@@ -34,7 +34,6 @@ namespace SSAANIP{
                     output.Content = "Invalid username or password";
                 }
             }
-
         }
         public void changeServer(object sender, RoutedEventArgs e){
             File.Delete("config.txt");

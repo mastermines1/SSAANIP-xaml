@@ -1,6 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.IO;
+using System.Text;
 
 namespace SSAANIP{
     public class RequestMethods{ //different requests
@@ -58,6 +63,33 @@ namespace SSAANIP{
             Request request = new(username, password, "getArtist", "&id=" + id);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
+        }
+        public async Task<IEnumerable<XElement>> sendStartScan()
+        {
+            Request request = new(username, password, "startScan");
+            IEnumerable<XElement> output = await request.sendRequestAsync();
+            return output;
+        }
+        public async void playSong(string id){
+            HttpClient httpClient = new();
+
+            MD5 md5 = MD5.Create();
+            string salt = createSalt(16);
+            byte[] inputBytes = Encoding.ASCII.GetBytes(password + salt);
+            byte[] hashed = md5.ComputeHash(inputBytes);
+            string authToken = Convert.ToHexString(hashed).ToLower();
+
+            string url = $@"http://{File.ReadAllLines("config.txt")[0].Split("=")[1]}/rest/stream?u={username}&t={authToken}&s={salt}&v={File.ReadAllLines("config.txt")[2].Split("=")[1]}&c={File.ReadAllLines("config.txt")[1].Split("=")[1]}&id={id}";
+            Stream stream = await httpClient.GetStreamAsync(url);
+
+
+        }
+        public static string createSalt(int size)
+        { //generates a salt of set size 
+            RandomNumberGenerator rng = RandomNumberGenerator.Create();
+            byte[] salt = new byte[size];
+            rng.GetBytes(salt);
+            return Convert.ToHexString(salt);
         }
     }
 }
