@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.IO;
 using System.Text;
+using System.Media;
+using NAudio.Wave;
+using System.Net;
+using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Drawing;
+
+
 
 namespace SSAANIP{
     public class RequestMethods{ //different requests
@@ -52,25 +61,22 @@ namespace SSAANIP{
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendGetAlbum(string id)
-        {
+        public async Task<IEnumerable<XElement>> sendGetAlbum(string id){
             Request request = new(username, password, "getAlbum", "&id="+id);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendGetArtist(string id)
-        {
+        public async Task<IEnumerable<XElement>> sendGetArtist(string id){
             Request request = new(username, password, "getArtist", "&id=" + id);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendStartScan()
-        {
+        public async Task<IEnumerable<XElement>> sendStartScan(){
             Request request = new(username, password, "startScan");
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async void playSong(string id){
+        public  string createUrl(string id){
             HttpClient httpClient = new();
 
             MD5 md5 = MD5.Create();
@@ -79,9 +85,8 @@ namespace SSAANIP{
             byte[] hashed = md5.ComputeHash(inputBytes);
             string authToken = Convert.ToHexString(hashed).ToLower();
 
-            string url = $@"http://{File.ReadAllLines("config.txt")[0].Split("=")[1]}/rest/stream?u={username}&t={authToken}&s={salt}&v={File.ReadAllLines("config.txt")[2].Split("=")[1]}&c={File.ReadAllLines("config.txt")[1].Split("=")[1]}&id={id}";
-            Stream stream = await httpClient.GetStreamAsync(url);
 
+            return $@"http://{File.ReadAllLines("config.txt")[0].Split("=")[1]}/rest/stream?u={username}&t={authToken}&s={salt}&v={File.ReadAllLines("config.txt")[2].Split("=")[1]}&c={File.ReadAllLines("config.txt")[1].Split("=")[1]}&id={id}";
 
         }
         public static string createSalt(int size)
