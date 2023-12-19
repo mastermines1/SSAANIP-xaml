@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Xml.Linq;
-using System.Net.Http;
-using System.Security.Cryptography;
+using System.Windows;
 
 namespace SSAANIP {
     public partial class MainWindow : Page {
@@ -21,8 +18,9 @@ namespace SSAANIP {
         public string connectionString = "Data source=tracks.db";
         public List<string> albumIds;
         string selectedArtistId;
-        public List<string> upNext = new List<string>();
-        public List<string> queue = new List<string>();
+        string selectedAlbumId;
+        public Queue<string> upNext = new Queue<string>();
+        public Queue<string> queue = new Queue<string>();
 
         public MainWindow(master master, string username, string password) {
             InitializeComponent();
@@ -43,7 +41,10 @@ namespace SSAANIP {
             displayArtists();
         }
 
+        public void nextSong(){
+            mediaElement.Source = new Uri(req.createUrl(upNext.Dequeue()));
 
+        }
 
 
 
@@ -78,6 +79,9 @@ namespace SSAANIP {
             }
             lsSongs.ItemsSource = songNames;
         }
+
+
+
 
 
 
@@ -225,7 +229,6 @@ namespace SSAANIP {
         private void lsAlbums_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             if ((sender as ListBox).SelectedItem != null){
                 string selectedAlbumName = (sender as ListBox).SelectedItem.ToString();
-                string selectedALbumId = string.Empty;
 
                 List<string> albumIds = new List<string>();
                 List<string> allAlbumIdsFromArtist = new List<string>();
@@ -250,6 +253,7 @@ namespace SSAANIP {
                         cmd.Parameters.Add(new SQLiteParameter("@id", albumId));
                         object result = cmd.ExecuteScalar();
                         if (result.ToString() == selectedArtistId){
+                            this.selectedAlbumId=albumId;
                             displayAlbums(albumId);
                         }
                     }
@@ -257,37 +261,41 @@ namespace SSAANIP {
             }
         }
 
-        private void playAlbum(object sender, System.Windows.RoutedEventArgs e){
+        private void playAlbum(object sender, RoutedEventArgs e){
             string selectedAlbumName = lsAlbums.SelectedItem.ToString();
-            string selectedAlbumID = string.Empty;
             List<string> songIds = new List<string>();
 
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
-                cmd.CommandText = "SELECT albumID FROM tblAlbums WHERE albumName = @name";
-                cmd.Parameters.Add(new SQLiteParameter("@name", selectedAlbumName));
-                selectedAlbumID = cmd.ExecuteScalar().ToString();
-            }
-
-            using (SQLiteConnection conn = new(connectionString))
-            using (var cmd = conn.CreateCommand()){
-                conn.Open();
                 cmd.CommandText = "SELECT songID FROM tblSongs WHERE albumID = @id";
-                cmd.Parameters.Add(new SQLiteParameter("@id", selectedAlbumID));
+                cmd.Parameters.Add(new SQLiteParameter("@id", this.selectedAlbumId));
                 using (SQLiteDataReader reader = cmd.ExecuteReader()){
                     while (reader.Read()){
                         songIds.Add(reader.GetString(0));
                     }
                 }
             }
+            upNext.Clear();
             for(int i = 1; i< songIds.Count; i++){
-                queue.Add(songIds[i]);
+                upNext.Enqueue(songIds[i]);
             }
-            req.playSong(songIds[0]);
+
+            mediaElement.Source = new Uri(req.createUrl(songIds[0]));
+
         }
 
+        private void mediaElement_MediaEnded(object sender, RoutedEventArgs e){
+            nextSong();
+        }
 
+        private void btnNextSong_click(object sender, RoutedEventArgs e){
+            nextSong();
+        }
 
+        private void btnPrevSong_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
