@@ -7,19 +7,24 @@
         mc:Ignorable="d" Background="White" Width="865" Height="414">
 
     <Grid Width="865" Height="414">
-        <Button Content="Refresh data" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button Content="Refresh data" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="75" Click="btnUpdateDb_clicked"/>
 
         <ListBox Name="lsArtist" HorizontalAlignment="Left" Height="119" Margin="55,88,0,0" VerticalAlignment="Top" Width="114" SelectionChanged="lsArtist_SelectionChanged" />
         <ListBox x:Name="lsAlbums" HorizontalAlignment="Left" Height="119" Margin="184,88,0,0" VerticalAlignment="Top" Width="114" SelectionChanged="lsAlbums_SelectionChanged"/>
         <ListBox Name="lsSongs" HorizontalAlignment="Left" Height="119" Margin="320,88,0,0" VerticalAlignment="Top" Width="230" />
-        <Button Content="Play selected album" Name="btnPlayAlbum" HorizontalAlignment="Left" Height="25" Margin="184,221,0,0" VerticalAlignment="Top" Width="114" Click="playAlbum"/>
-        <MediaElement Name="mediaElement" HorizontalAlignment="Left" Height="72" Margin="670,332,0,0" VerticalAlignment="Top" Width="156" MediaEnded="mediaElement_MediaEnded"  />
-        <Border BorderBrush="Black" Background="LightSeaGreen" BorderThickness="1" HorizontalAlignment="Center" Height="68" Margin="0,346,0,0" VerticalAlignment="Top" Width="865"/>
-        <Button Name="btnPrevSong" Margin="38,348,805,34" Background="GreenYellow" BorderBrush="Transparent" Content="&#60;" Click="btnPrevSong_Click" />
+        <Button Content="Play selected album" Name="btnPlayAlbum" HorizontalAlignment="Left" Height="25" Margin="184,221,0,0" VerticalAlignment="Top" Width="114" Click="playAlbum" Visibility="Hidden"/>
+        <MediaElement Name="mediaElement" HorizontalAlignment="Left" Height="72" Margin="706,246,0,0" VerticalAlignment="Top" Width="156" MediaEnded="mediaElement_MediaEnded" UnloadedBehavior="Manual" LoadedBehavior="Manual"  />
+        <Border BorderBrush="Black" Background="LightSeaGreen" BorderThickness="1" HorizontalAlignment="Center" Height="67" Margin="0,320,0,0" VerticalAlignment="Top" Width="865"/>
+        <Button Name="btnPrevSong" Margin="38,333,805,49" Background="GreenYellow" BorderBrush="Transparent" Content="&#60;" Click="btnPrevSong_Click" />
+        <Button Name="btnStop" Margin="117,333,726,49" Background="GreenYellow" BorderBrush="Transparent" Content="Stop" Click="btnStop_Click" />
+        <Button Name="btnNextSong" Margin="89,333,753,49" Background="GreenYellow" BorderBrush="Transparent" Content="&#62;" Click="btnNextSong_click"/>
+        <Button Name="btnPlayPause" Margin="63,333,780,49" Background="GreenYellow" BorderBrush="Transparent" Content="⏵" Click="btnPlayPause_Click" />
+        <Button Name="btnLoopToggle" Margin="800,334,43,48" Background="GreenYellow" BorderBrush="Transparent" Content="loop" />
 
-            <Button Name="btnNextSong" Margin="89,348,753,34" Background="GreenYellow" BorderBrush="Transparent" Content="&#62;" Click="btnNextSong_click"/>
-        
-    
-    
+        <Label Name="lblSongPlaying" Margin="173,333,89,49" Content=""/>
+        <Slider Name="sdrVolume" HorizontalAlignment="Left" Height="21" Margin="0,365,0,0" VerticalAlignment="Top" Width="179" ValueChanged="sdrVolume_ValueChanged"/>
+
+
+
     </Grid>
 </Page>

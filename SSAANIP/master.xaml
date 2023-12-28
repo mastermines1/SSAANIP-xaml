@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SSAANIP"
         mc:Ignorable="d"
-        Title="master" Width="865" Height="414" ResizeMode="NoResize" Background="White" Foreground="Black" >
+        Title="master" Width="865" Height="414"  ResizeMode="NoResize" Background="White" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" >
 
     <Frame Name="Frame" NavigationUIVisibility="Hidden" >
 </Frame>

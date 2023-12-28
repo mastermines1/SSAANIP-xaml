@@ -72,3 +72,10 @@ C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug
 C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.Wasapi.dll
 C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.WinForms.dll
 C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.WinMM.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.Asio.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.Core.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.Midi.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.Wasapi.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.WinForms.dll
+C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.WinMM.dll
