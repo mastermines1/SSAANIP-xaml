@@ -6,13 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.IO;
 using System.Text;
-using System.Media;
-using NAudio.Wave;
-using System.Net;
-using System.Threading;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Drawing;
+
 
 
 
@@ -20,8 +14,7 @@ namespace SSAANIP{
     public class RequestMethods{ //different requests
         public string username;
         public string password;
-        public RequestMethods(string username, string password)
-        {
+        public RequestMethods(string username, string password){
             this.username = username;
             this.password = password;
         }
@@ -76,7 +69,7 @@ namespace SSAANIP{
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public  string createUrl(string id){
+        public string createUrl(string id){
             HttpClient httpClient = new();
 
             MD5 md5 = MD5.Create();
@@ -89,12 +82,12 @@ namespace SSAANIP{
             return $@"http://{File.ReadAllLines("config.txt")[0].Split("=")[1]}/rest/stream?u={username}&t={authToken}&s={salt}&v={File.ReadAllLines("config.txt")[2].Split("=")[1]}&c={File.ReadAllLines("config.txt")[1].Split("=")[1]}&id={id}";
 
         }
-        public static string createSalt(int size)
-        { //generates a salt of set size 
+        public static string createSalt(int size){ //generates a salt of set size 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] salt = new byte[size];
             rng.GetBytes(salt);
             return Convert.ToHexString(salt);
         }
+        
     }
 }
