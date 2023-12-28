@@ -37,7 +37,7 @@ namespace SSAANIP{
         }
         public void changeServer(object sender, RoutedEventArgs e){
             File.Delete("config.txt");
-            this.parent.Frame.Content = new loginPage(this.parent);
+            this.parent.Frame.Content = new SocketPage(this.parent);
         }
     }
 }

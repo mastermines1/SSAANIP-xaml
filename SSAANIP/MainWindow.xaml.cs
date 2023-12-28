@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Xml.Linq;
 using System.Windows;
+using System.Threading.Tasks;
 
 namespace SSAANIP {
     public partial class MainWindow : Page {
@@ -21,6 +22,10 @@ namespace SSAANIP {
         string selectedAlbumId;
         public Queue<string> upNext = new Queue<string>();
         public Queue<string> queue = new Queue<string>();
+        public Stack<string> prevPlayed = new Stack<string>();
+        public Boolean isPaused = false;
+        public string currentSongId;
+        public string currentAlbumId;
 
         public MainWindow(master master, string username, string password) {
             InitializeComponent();
@@ -41,11 +46,27 @@ namespace SSAANIP {
             displayArtists();
         }
 
-        public void nextSong(){
-            mediaElement.Source = new Uri(req.createUrl(upNext.Dequeue()));
+        public async void nextSong(){
+
+            prevPlayed.Push(currentSongId);
+            if(queue.Count > 0){
+                currentSongId = queue.Dequeue();
+                mediaElement.Source = new Uri(req.createUrl(currentSongId));
+                lblSongPlaying.Content = await getSongName(currentSongId);
+            }
+            else if (upNext.Count > 0){ 
+                currentSongId = upNext.Dequeue();
+                mediaElement.Source = new Uri(req.createUrl(currentSongId));
+                lblSongPlaying.Content = await getSongName(currentSongId);
+            }
 
         }
 
+
+        public async Task<string> getSongName(string songId){
+            var songData = await req.Browsing("getSong", songId);
+            return songData.Elements().First().Attribute("title").Value.ToString();
+        }
 
 
         //Methods to display data
@@ -87,12 +108,12 @@ namespace SSAANIP {
 
 
         // Methods to fetch data from server to local database
-        public async void updateDB() {
+        public async void updateDB(){
             var scanStatus = await req.sendStartScan();
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()) {
                 conn.Open();
-                cmd.CommandText = "DELETE FROM tblAblumlink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;";
+                cmd.CommandText = "DELETE FROM tblAlbumLink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;";
                 cmd.ExecuteScalar();
             }
             updateArtists();
@@ -178,13 +199,13 @@ namespace SSAANIP {
         }
 
         //Event handlers
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e) {
+        private void btnUpdateDb_clicked(object sender, System.Windows.RoutedEventArgs e) {
             updateDB();
             displayArtists();
         }
 
         private void lsArtist_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-
+            btnPlayAlbum.Visibility = Visibility.Hidden;
             lsSongs.ItemsSource = null;
             lsAlbums.ItemsSource = null;
 
@@ -227,6 +248,7 @@ namespace SSAANIP {
         }
 
         private void lsAlbums_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            btnPlayAlbum.Visibility = Visibility.Visible;
             if ((sender as ListBox).SelectedItem != null){
                 string selectedAlbumName = (sender as ListBox).SelectedItem.ToString();
 
@@ -277,12 +299,14 @@ namespace SSAANIP {
                 }
             }
             upNext.Clear();
-            for(int i = 1; i< songIds.Count; i++){
+            for(int i = 0; i< songIds.Count; i++){
                 upNext.Enqueue(songIds[i]);
             }
 
-            mediaElement.Source = new Uri(req.createUrl(songIds[0]));
-
+            nextSong();
+            mediaElement.Play();
+            isPaused = false;
+            btnPlayPause.Content = "||";
         }
 
         private void mediaElement_MediaEnded(object sender, RoutedEventArgs e){
@@ -293,9 +317,39 @@ namespace SSAANIP {
             nextSong();
         }
 
-        private void btnPrevSong_Click(object sender, RoutedEventArgs e)
-        {
+        private void btnPrevSong_Click(object sender, RoutedEventArgs e){
+            if(prevPlayed.Count > 0){
+                upNext.Enqueue(currentSongId);
+                queue.Enqueue(prevPlayed.Pop());
+                nextSong();
+            }
+        }
 
+        private void btnPlayPause_Click(object sender, RoutedEventArgs e){
+            if(mediaElement.Source != null){
+                if (isPaused) { 
+                    mediaElement.Play();
+                    btnPlayPause.Content = "||";
+                    isPaused = false;
+                }
+                else{
+                    mediaElement.Pause();
+                    btnPlayPause.Content = "⏵";
+                    isPaused = true;
+                }
+            }
+        }
+        private void btnStop_Click(object sender, RoutedEventArgs e){
+            mediaElement.Stop();
+            upNext.Clear();
+            queue.Clear();
+            prevPlayed.Clear();
+            btnPlayPause.Content = "⏵";
+            lblSongPlaying.Content = "";
+        }
+
+        private void sdrVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e){
+            double value = sdrVolume.Value;
         }
     }
 }
