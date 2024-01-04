@@ -6,7 +6,6 @@ namespace SSAANIP{
 
         public master(){
             InitializeComponent();
-
             try{
                 if (File.ReadAllLines("config.txt")[0].Split("=")[1] == ""){
                     Frame.Content = new SocketPage(this);
