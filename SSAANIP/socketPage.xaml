@@ -9,7 +9,7 @@
     <Grid Width="865" Height="414">
 
 
-        <Button Content="Button" HorizontalAlignment="Left" Margin="375,248,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.425,2.751" Click="Button_Click"/>
+        <Button Content="Confirm" HorizontalAlignment="Left" Margin="375,248,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.425,2.751" Click="Button_Click"/>
         <Label Content="Please enter the socket your server is hosted on:" HorizontalAlignment="Left" Height="54" Margin="249,0,0,0" VerticalAlignment="Center" Width="292"/>
         <TextBox HorizontalAlignment="Left" Height="24" Margin="334,219,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="118" Name="socketBox"/>
         <Label Name="outputlbl" HorizontalAlignment="Left" Height="26" Margin="320,288,0,0" VerticalAlignment="Top" Width="147"/>
