@@ -12,17 +12,21 @@
         <ListBox Name="lsArtist" HorizontalAlignment="Left" Height="119" Margin="55,88,0,0" VerticalAlignment="Top" Width="114" SelectionChanged="lsArtist_SelectionChanged" />
         <ListBox x:Name="lsAlbums" HorizontalAlignment="Left" Height="119" Margin="184,88,0,0" VerticalAlignment="Top" Width="114" SelectionChanged="lsAlbums_SelectionChanged"/>
         <ListBox Name="lsSongs" HorizontalAlignment="Left" Height="119" Margin="320,88,0,0" VerticalAlignment="Top" Width="230" />
-        <Button Content="Play selected album" Name="btnPlayAlbum" HorizontalAlignment="Left" Height="25" Margin="184,221,0,0" VerticalAlignment="Top" Width="114" Click="playAlbum" Visibility="Hidden"/>
+        <Button Content="Play selected album" Name="btnPlayAlbum" HorizontalAlignment="Left" Height="25" Margin="184,221,0,0" VerticalAlignment="Top" Width="114" Click="btnPlayAlbum_clicked" Visibility="Hidden"/>
         <MediaElement Name="mediaElement" HorizontalAlignment="Left" Height="72" Margin="706,246,0,0" VerticalAlignment="Top" Width="156" MediaEnded="mediaElement_MediaEnded" UnloadedBehavior="Manual" LoadedBehavior="Manual"  />
         <Border BorderBrush="Black" Background="LightSeaGreen" BorderThickness="1" HorizontalAlignment="Center" Height="67" Margin="0,320,0,0" VerticalAlignment="Top" Width="865"/>
         <Button Name="btnPrevSong" Margin="38,333,805,49" Background="GreenYellow" BorderBrush="Transparent" Content="&#60;" Click="btnPrevSong_Click" />
         <Button Name="btnStop" Margin="117,333,726,49" Background="GreenYellow" BorderBrush="Transparent" Content="Stop" Click="btnStop_Click" />
         <Button Name="btnNextSong" Margin="89,333,753,49" Background="GreenYellow" BorderBrush="Transparent" Content="&#62;" Click="btnNextSong_click"/>
         <Button Name="btnPlayPause" Margin="63,333,780,49" Background="GreenYellow" BorderBrush="Transparent" Content="⏵" Click="btnPlayPause_Click" />
-        <Button Name="btnLoopToggle" Margin="800,334,43,48" Background="GreenYellow" BorderBrush="Transparent" Content="loop" />
+        <Button Name="btnLoopToggle" Margin="821,333,22,49" Background="red" BorderBrush="Transparent" Content="🔁" Click="btnLoopToggle_Click" />
+        <Button Name="btnShuffleToggle" Margin="794,333,49,49" Background="red" BorderBrush="Transparent" Content="🔀" Click="btnShuffleToggle_Click" />
 
-        <Label Name="lblSongPlaying" Margin="173,333,89,49" Content=""/>
-        <Slider Name="sdrVolume" HorizontalAlignment="Left" Height="21" Margin="0,365,0,0" VerticalAlignment="Top" Width="179" ValueChanged="sdrVolume_ValueChanged"/>
+        <Label Name="lblSongPlaying" Margin="173,323,174,58" Content=""/>
+
+        <Slider Name="sdrVolume" HorizontalAlignment="Left" Height="21" Margin="0,361,0,0" VerticalAlignment="Top" Value="5" Width="168" ValueChanged="sdrVolume_ValueChanged"/>
+        <Slider Name="sdrPosition" HorizontalAlignment="Left" Visibility="Visible" Height="24" TickFrequency="1" TickPlacement="None" IsSnapToTickEnabled="True" Margin="173,360,0,0" VerticalAlignment="Top" Width="603"  Maximum="100" ValueChanged="sdrPosition_ValueChanged"/>
+        <Label x:Name="lblTime" Margin="696,321,89,63" Content=""/>
 
 
 
