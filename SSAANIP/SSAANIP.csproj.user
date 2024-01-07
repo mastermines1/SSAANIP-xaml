@@ -7,6 +7,11 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="userMgmt.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Socketpage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -14,6 +19,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="userMgmt.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
