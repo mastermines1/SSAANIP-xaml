@@ -9,12 +9,10 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Media;
-using System.Reflection;
-using System.Diagnostics.Eventing.Reader;
-using System.ComponentModel;
 
 namespace SSAANIP {
     public partial class MainWindow : Page {
+        readonly fetchData fetch;
         readonly RequestMethods req;
         public master parent;
         public string connectionString = "Data source=tracks.db";
@@ -26,7 +24,7 @@ namespace SSAANIP {
         public Queue<string> queue = new();
         public Queue<string> shuffledUpNext = new();
         public Stack<string> prevPlayed = new();
-        public Boolean isPaused = false;
+        public Boolean isPaused = true;
         public string currentSongId;
         public string playingAlbumId;
         public Boolean updatePosition = false;
@@ -40,9 +38,9 @@ namespace SSAANIP {
         public MainWindow(master master, string username, string password) {
             InitializeComponent();
             parent = master;
-
-            
             req = new(username, password);
+            fetch = new(connectionString, req);
+            
             if (!File.Exists("tracks.db")) { //checks if file exists
                 File.Create("tracks.db");
                 using (SQLiteConnection conn = new(connectionString))
@@ -51,15 +49,13 @@ namespace SSAANIP {
                     cmd.CommandText = "CREATE TABLE \"tblAlbumArtistlink\" (\r\n\t\"linkId\"\tTEXT,\r\n\t\"artistId\"\tTEXT,\r\n\t\"AlbumId\"\tTEXT,\r\n\tPRIMARY KEY(\"linkId\"),\r\n\tFOREIGN KEY(\"AlbumId\") REFERENCES \"tblAlbums\"(\"albumID\"),\r\n\tFOREIGN KEY(\"artistId\") REFERENCES \"tblArtists\"(\"artistId\")\r\n);CREATE TABLE \"tblAlbums\" (\r\n\t\"albumID\"\tTEXT,\r\n\t\"albumName\"\tTEXT,\r\n\t\"albumDuration\"\tTEXT,\r\n\tPRIMARY KEY(\"albumID\")\r\n);CREATE TABLE \"tblArtists\" (\r\n\t\"artistId\"\tTEXT,\r\n\t\"artistName\"\tTEXT,\r\n\tPRIMARY KEY(\"artistId\")\r\n);CREATE TABLE \"tblSongs\" (\r\n\t\"songId\"\tTEXT,\r\n\t\"songName\"\tTEXT,\r\n\t\"songDuration\"\tTEXT,\r\n\t\"albumId\"\tTEXT,\r\n\t\"songIndex\"\tTEXT,\r\n\tPRIMARY KEY(\"songId\"),\r\n\tFOREIGN KEY(\"albumId\") REFERENCES \"tblAlbums\"(\"albumID\")\r\n)CREATE TABLE \"tblPlaylistAlbumLink\" (\r\n\t\"linkId\"\tINTEGER,\r\n\t\"playlistId\"\tTEXT,\r\n\t\"artistID\"\tTEXT,\r\n\tPRIMARY KEY(\"linkId\" AUTOINCREMENT),\r\n\tFOREIGN KEY(\"artistID\") REFERENCES \"tblAlbums\"(\"albumId\"),\r\n\tFOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\")\r\n)CREATE TABLE \"tblPlaylistSongLink\" (\r\n\t\"linkId\"\tINTEGER,\r\n\t\"playlistId\"\tTEXT,\r\n\t\"songId\"\tTEXT,\r\n\tPRIMARY KEY(\"linkId\" AUTOINCREMENT),\r\n\tFOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),\r\n\tFOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\")\r\n);CREATE TABLE \"tblPlaylists\" (\r\n\t\"playlistId\"\tTEXT,\r\n\t\"playlistName\"\tTEXT,\r\n\t\"playlistDuration\"\tTEXT,\r\n\tPRIMARY KEY(\"playlistId\")\r\n)";
                     cmd.ExecuteScalar();
                 }
-                updateDB();
             }
+            fetch.updateDB();
             displayArtists();
         }
 
         public async void nextSong(){
             fromQueue = false;
-            isPaused = false;
-            btnPlayPause.Content = "||";
             if (loopMode == 2){
                 mediaElement.Position = new TimeSpan(0);
             }
@@ -81,6 +77,21 @@ namespace SSAANIP {
             sdrPosition.Visibility = Visibility.Visible;
             updatePosition = false;
             updateSdr();
+
+            displayQueue();
+        }
+        public async void displayQueue(){
+            string[] queueIds = queue.ToArray();
+
+            lsQueue.ItemsSource = await getNamesFromIDs(queueIds);
+
+        }
+        public async Task<string[]> getNamesFromIDs(string[] ids){
+            List<string> names = new();
+            for (int i = 0; i < ids.Length; i++){
+                if(ids[i]!=null) names.Add(await getSongName(ids[i]));
+            }
+            return names.ToArray();
         }
         public void playAlbum(){
 
@@ -97,8 +108,6 @@ namespace SSAANIP {
             nextSong();
             mediaElement.Play();
         }
-
-
         public List<string> getSongIdsFromAlbumId(string albumId){
             List<string> songIds = new();
 
@@ -115,7 +124,6 @@ namespace SSAANIP {
             }
             return songIds;
         }
-
         public async void updateSdr(){
             string tempSongId = this.currentSongId;
             double currentPosition = 0;
@@ -165,8 +173,6 @@ namespace SSAANIP {
             return Queue;
         }
 
-
-
         //Methods to display data
         public void displayArtists() {
             List<string> artistNames = new();
@@ -191,24 +197,23 @@ namespace SSAANIP {
                 conn.Open();
                 cmd.CommandText = "SELECT songId FROM tblAlbumSongLink WHERE albumid = @id";
                 cmd.Parameters.Add(new SQLiteParameter("@id", albumId));
-                using SQLiteDataReader rader = cmd.ExecuteReader();{
-
+                using SQLiteDataReader reader = cmd.ExecuteReader();{
+                    while (reader.Read()){
+                        songIds.Add(reader.GetString(0));
+                    }
                 }
-                songIds.Add() = cmd.ExecuteScalar().ToString();
             }
-            
-            foreach (string s in songIds)
-            {
 
-            }
-            using (SQLiteConnection conn = new(connectionString))
-            using (var cmd = conn.CreateCommand()){
-                conn.Open();
-                cmd.CommandText = "SELECT songName FROM tblSongs WHERE songId = @id";
-                cmd.Parameters.Add(new SQLiteParameter("@id", songId));
-                using SQLiteDataReader reader = cmd.ExecuteReader(); {
-                    while (reader.Read()) {
-                        songNames.Add(reader.GetString(0));
+            foreach (string s in songIds){
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "SELECT songName FROM tblSongs WHERE songId = @id";
+                    cmd.Parameters.Add(new SQLiteParameter("@id", s));
+                    using SQLiteDataReader reader = cmd.ExecuteReader();{
+                        while (reader.Read()){
+                            songNames.Add(reader.GetString(0));
+                        }
                     }
                 }
             }
@@ -216,96 +221,13 @@ namespace SSAANIP {
         }
 
 
-        // Methods to fetch data from server to local database
-        public async void updateDB(){
-            await req.sendStartScan();
-            using (SQLiteConnection conn = new(connectionString))
-            using (var cmd = conn.CreateCommand()) {
-                conn.Open();
-                cmd.CommandText = "DELETE FROM tblAlbumArtistLink;DELETE FROM tblplaylistArtistLink;DELETE FROM tblPlaylistSongLink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;DELETE FROM tblPlaylists";
-                cmd.ExecuteScalar();
-            }
-            updateArtists();
-        }
-        public async void updateArtists() {
-            List<string> artistsID = new();
-            IEnumerable<XElement> indexes = await req.sendGetIndexes();
-            foreach (XElement element in indexes.Elements().Elements().Elements()) { //get every artist id
-                artistsID.Add(element.FirstAttribute.Value);
-            }
-
-            foreach (string id in artistsID) { //gets the artist name
-                IEnumerable<XElement> responce = await req.sendGetArtist(id);
-                string artistName = responce.Elements().ElementAt(0).FirstAttribute.NextAttribute.Value;
-                using (SQLiteConnection conn = new(connectionString))
-                using (var cmd = conn.CreateCommand()) {
-                    conn.Open();
-                    cmd.CommandText = "INSERT INTO tblArtists VALUES (@id,@name)";
-                    cmd.Parameters.Add(new SQLiteParameter("@id", id));
-                    cmd.Parameters.Add(new SQLiteParameter("@name", artistName));
-                    cmd.ExecuteScalar();
-                }
-                updateAlbums(id);
-            }
-        }
-        public async void updateAlbums(string artistID) {
-            var artistData = await req.sendGetArtist(artistID);
-            foreach (XElement album in artistData.Elements().Elements()) {
-                string currentAlbumId = album.FirstAttribute.Value.ToString();
-
-
-                using (SQLiteConnection conn = new(connectionString))
-                using (var cmd = conn.CreateCommand()) {
-                    conn.Open();
-                    cmd.CommandText = "INSERT INTO tblAlbums VALUES (@id,@name,@duration)";
-                    cmd.Parameters.Add(new SQLiteParameter("@id", currentAlbumId));
-                    cmd.Parameters.Add(new SQLiteParameter("@name", album.Attribute("name").Value));
-                    cmd.Parameters.Add(new SQLiteParameter("@duration", album.Attribute("duration").Value));
-
-                    cmd.ExecuteScalar();
-                }
-
-                using (SQLiteConnection conn = new(connectionString))
-                using (var cmd = conn.CreateCommand())
-                {
-                    conn.Open();
-                    cmd.CommandText = "INSERT INTO tblAlbumArtistLink (artistId,albumId) VALUES (@artistId,@albumId)";
-                    cmd.Parameters.Add(new SQLiteParameter("@artistId", artistID));
-                    cmd.Parameters.Add(new SQLiteParameter("@albumId", currentAlbumId));
-                    cmd.ExecuteScalar();
-                }
-                updateTracks(currentAlbumId);
-            }
-        }
-        public async void updateTracks(string albumID) {
-            var albumData = await req.sendGetAlbum(albumID);
-            int index = 0;
-            foreach (XElement track in albumData.Elements().Elements()) {
-
-                using (SQLiteConnection conn = new(connectionString))
-                using (var cmd = conn.CreateCommand()) {
-                    conn.Open();
-                    cmd.CommandText = "INSERT INTO tblSongs VALUES (@id,@name,@duration,@index)";
-                    cmd.Parameters.Add(new SQLiteParameter("@id", track.FirstAttribute.Value));
-                    cmd.Parameters.Add(new SQLiteParameter("@name", track.Attribute("title").Value));
-                    cmd.Parameters.Add(new SQLiteParameter("@duration", track.Attribute("duration").Value));
-                    cmd.Parameters.Add(new SQLiteParameter("@index", index));
-                    cmd.ExecuteScalar();
-                }
-                using(SQLiteConnection conn = new(connectionString))
-                using (var cmd = conn.CreateCommand()){
-                    conn.Open();
-                    cmd.CommandText = "INSERT INTO tblAlbumSongLink (albumId,songId) VALUES (@albumId,@songId)";
-                    cmd.Parameters.Add(new SQLiteParameter("@albumId",albumID));
-                    cmd.Parameters.Add(new SQLiteParameter("@songId", track.FirstAttribute.Value));
-                    cmd.ExecuteScalar();
-                }
-                index += 1;
-            }
-        }
         //Event handlers
         private void btnUpdateDb_clicked(object sender, System.Windows.RoutedEventArgs e) {
-            updateDB();
+            lsArtist.ItemsSource = null;
+            lsAlbums.ItemsSource = null;
+            lsSongs.ItemsSource = null;
+
+            fetch.updateDB();
             displayArtists();
         }
         private void lsArtist_SelectionChanged(object sender, SelectionChangedEventArgs e) {
@@ -315,19 +237,21 @@ namespace SSAANIP {
             btnQueueSong.Visibility = Visibility.Hidden;
             lsSongs.ItemsSource = null;
             lsAlbums.ItemsSource = null;
-
-            string selectedArtist = (sender as ListBox).SelectedItem.ToString();
             selectedArtistId = string.Empty;
             List<string> albumNames = new();
             List<string> albumIds = new();
+            if (lsArtist.SelectedItem != null){
+                string selectedArtist = lsArtist.SelectedItem.ToString();
 
-            using (SQLiteConnection conn = new(connectionString))
-            using (var cmd = conn.CreateCommand()) {
-                conn.Open();
-                cmd.CommandText = "SELECT artistId FROM tblArtists WHERE artistName = @name";
-                cmd.Parameters.Add(new SQLiteParameter("@name", selectedArtist));
-                selectedArtistId = cmd.ExecuteScalar().ToString();
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()) {
+                    conn.Open();
+                    cmd.CommandText = "SELECT artistId FROM tblArtists WHERE artistName = @name";
+                    cmd.Parameters.Add(new SQLiteParameter("@name", selectedArtist));
+                    selectedArtistId = cmd.ExecuteScalar().ToString();
+                }
             }
+
 
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()) {
@@ -350,17 +274,13 @@ namespace SSAANIP {
                 albumNames.Add(cmd.ExecuteScalar().ToString());
                 
             }
-
             lsAlbums.ItemsSource = albumNames;
         }
         private void lsAlbums_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            btnPlayAlbum.Visibility = Visibility.Visible;
-            btnQueueAlbum.Visibility = Visibility.Visible;
             btnPlaySong.Visibility = Visibility.Hidden;
             btnQueueSong.Visibility = Visibility.Hidden;
             if ((sender as ListBox).SelectedItem != null){
                 string selectedAlbumName = (sender as ListBox).SelectedItem.ToString();
-
                 List<string> albumIds = new();
 
                 using (SQLiteConnection conn = new(connectionString))
@@ -388,11 +308,11 @@ namespace SSAANIP {
                         displayAlbums(albumId);
                     }
                 }
+                btnPlayAlbum.Visibility = Visibility.Visible;
+                btnQueueAlbum.Visibility = Visibility.Visible;
             }
         }
         private void lsSongs_SelectionChanged(object sender, SelectionChangedEventArgs e){
-            btnPlaySong.Visibility = Visibility.Visible;
-            btnQueueSong.Visibility = Visibility.Visible;
             if(lsSongs.SelectedItem != null){
                 string currentSongName = lsSongs.SelectedItem.ToString();
                 using SQLiteConnection conn = new(connectionString);
@@ -402,8 +322,9 @@ namespace SSAANIP {
                     cmd.Parameters.Add(new SQLiteParameter("@name", currentSongName));
                     selectedSongId = cmd.ExecuteScalar().ToString();
                 }
+                btnPlaySong.Visibility = Visibility.Visible;
+                btnQueueSong.Visibility = Visibility.Visible;
             }
-
         }
         private void btnPlayAlbum_clicked(object sender, RoutedEventArgs e){
             playAlbum();
@@ -413,6 +334,7 @@ namespace SSAANIP {
             foreach (string songId in songIds){
                 queue.Enqueue(songId);
             }
+            displayQueue();
         }
         private void btnPlaySong_Click(object sender, RoutedEventArgs e){
             int selectedSongIndex;
@@ -435,7 +357,8 @@ namespace SSAANIP {
             if(isShuffled) songIndex = shuffle(songIndex);
         }
         private void btnQueueSong_Click(object sender, RoutedEventArgs e){
-            queue.Enqueue(currentSongId);
+            queue.Enqueue(selectedSongId);
+            displayQueue();
         }
 
         private void mediaElement_MediaEnded(object sender, RoutedEventArgs e){
@@ -456,7 +379,7 @@ namespace SSAANIP {
             }
         }
         private void btnPlayPause_Click(object sender, RoutedEventArgs e){
-            if(mediaElement.Source != null){
+            if(mediaElement.Source != null || queue.Count > 0){
                 if (isPaused) { 
                     mediaElement.Play();
                     btnPlayPause.Content = "||";
@@ -472,11 +395,14 @@ namespace SSAANIP {
         private void btnStop_Click(object sender, RoutedEventArgs e){
             updatePosition = false;
             mediaElement.Stop();
-            //upNext.Clear();
             queue.Clear();
             prevPlayed.Clear();
             btnPlayPause.Content = "⏵";
             lblSongPlaying.Content = "";
+            lsQueue.ItemsSource = null;
+            mediaElement.Source = null;
+            lblTime.Content = "";
+            sdrPosition.Value = 0;
         }
         private void sdrVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e){
             mediaElement.Volume = e.NewValue / 10;
@@ -531,6 +457,72 @@ namespace SSAANIP {
                 songIndex = shuffle(songIndex);
             }
         }
+        private void lsQueue_SelectionChanged(object sender, SelectionChangedEventArgs e){
+            if(lsQueue.SelectedItem == null){
+                btnQueueUp.Visibility = Visibility.Hidden;
+                btnQueueDelete.Visibility = Visibility.Hidden;
+                btnQueueDown.Visibility = Visibility.Hidden;
+            }
+            else{
+                btnQueueUp.Visibility = Visibility.Visible;
+                btnQueueDelete.Visibility = Visibility.Visible;
+                btnQueueDown.Visibility = Visibility.Visible;
+            }
+        }
+        private async void btnQueueUp_Click(object sender, RoutedEventArgs e){
+            string[] queueIds = queue.ToArray();
+            string[] queueNames;
+            if(lsQueue.SelectedIndex > 0){
+                int selectedIndex = lsQueue.SelectedIndex;
+                string temp = queueIds[selectedIndex-1];
+                queueIds[selectedIndex - 1] = queueIds[selectedIndex];
+                queueIds[selectedIndex] = temp;
+                queueNames = await getNamesFromIDs(queueIds);
 
+                queue.Clear();
+                foreach (string id in queueIds){
+                    queue.Enqueue(id);
+                }
+
+                lsQueue.ItemsSource = queueNames;
+            }
+        }
+        private async void btnQueueDown_Click(object sender, RoutedEventArgs e){
+            string[] queueIds = queue.ToArray();
+            string[] queueNames;
+            if (lsQueue.SelectedIndex > 0 && lsQueue.SelectedIndex < queue.Count-1){
+                int selectedIndex = lsQueue.SelectedIndex;
+                string temp = queueIds[selectedIndex + 1];
+                queueIds[selectedIndex + 1] = queueIds[selectedIndex];
+                queueIds[selectedIndex] = temp;
+                queueNames = await getNamesFromIDs(queueIds);
+
+                queue.Clear();
+                foreach (string id in queueIds){
+                    queue.Enqueue(id);
+                }
+
+                lsQueue.ItemsSource = queueNames;
+            }
+        }
+        private async void btnQueueDelete_Click(object sender, RoutedEventArgs e){
+            string[] queueIds = queue.ToArray();
+            string[] queueNames;
+            if (lsQueue.SelectedIndex > 0){
+                int selectedIndex = lsQueue.SelectedIndex;
+                for(int i = selectedIndex; i < queueIds.Length-1; i++){
+                    queueIds[i] = queueIds[i+1];
+                }
+                queueIds[queueIds.Length-1] = null;
+                queueNames = await getNamesFromIDs(queueIds);
+
+                queue.Clear();
+                foreach (string id in queueIds){
+                    queue.Enqueue(id);
+                }
+
+                lsQueue.ItemsSource = queueNames;
+            }
+        }
     }
 }
