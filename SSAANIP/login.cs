@@ -22,16 +22,22 @@ namespace SSAANIP{
             string username = usrBox.Text.ToString();
             string password = pwdBox.Password.ToString();
 
-            Request request = new(username, password, "ping");
-            var response = await request.sendRequestAsync();
+            req = new(username, password);
+            try{
+                var response = await req.System("ping");
             
-            if (response.First().Attribute("status").Value.ToString() == "ok"){ //valid username and password
-                parent.Frame.Content = new MainWindow(parent, username, pwdBox.Password.ToString());
+                if (response.First().Attribute("status").Value.ToString() == "ok"){ //valid username and password
+                    parent.Frame.Content = new MainWindow(parent,req);
+                }
+                else{
+                    output.Content = "Invalid username or password";
+                    pwdBox.Clear();
+                }
             }
-            else{
-                output.Content = "Invalid username or password";
-                pwdBox.Clear();
+            catch{
+                output.Content = "Cant access server";
             }
+
             
         }
         public void changeServer(object sender, RoutedEventArgs e){

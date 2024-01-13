@@ -34,11 +34,12 @@ namespace SSAANIP {
         public Boolean fromQueue = false;
         public Boolean isShuffled = false;
         int currentSongIndex;
-
-        public MainWindow(master master, string username, string password) {
+        string prioNextUp = null;
+        string[] queueNames;
+        public MainWindow(master master,RequestMethods req) {
             InitializeComponent();
             parent = master;
-            req = new(username, password);
+            this.req = req;
             fetch = new(connectionString, req);
             
             if (!File.Exists("tracks.db")) { //checks if file exists
@@ -50,7 +51,7 @@ namespace SSAANIP {
                     cmd.ExecuteScalar();
                 }
             }
-            fetch.updateDB();
+            //fetch.updateDB();
             displayArtists();
         }
 
@@ -58,6 +59,11 @@ namespace SSAANIP {
             fromQueue = false;
             if (loopMode == 2){
                 mediaElement.Position = new TimeSpan(0);
+            }
+            else if(prioNextUp != null){
+                mediaElement.Source = new Uri(req.createUrl(prioNextUp));
+                prioNextUp = null;
+                lblSongPlaying.Content = await getSongName(currentSongId);
             }
             else if(queue.Count > 0){
                 fromQueue = true;
@@ -74,7 +80,6 @@ namespace SSAANIP {
             else if(songIndex.Count == 0 && loopMode == 1){
                 playAlbum();
             }
-            sdrPosition.Visibility = Visibility.Visible;
             updatePosition = false;
             updateSdr();
 
@@ -82,8 +87,9 @@ namespace SSAANIP {
         }
         public async void displayQueue(){
             string[] queueIds = queue.ToArray();
-
-            lsQueue.ItemsSource = await getNamesFromIDs(queueIds);
+            queueNames = await getNamesFromIDs(queueIds);
+            lsQueue.ItemsSource = queueNames;
+            btnClearQueue.Visibility = Visibility.Visible;
 
         }
         public async Task<string[]> getNamesFromIDs(string[] ids){
@@ -171,6 +177,19 @@ namespace SSAANIP {
                 Queue.Enqueue(Array[i]);
             }
             return Queue;
+        }
+
+        public void stop(){
+            updatePosition = false;
+            mediaElement.Stop();
+            queue.Clear();
+            prevPlayed.Clear();
+            btnPlayPause.Content = "⏵";
+            lblSongPlaying.Content = "";
+            lsQueue.ItemsSource = null;
+            mediaElement.Source = null;
+            lblTime.Content = "";
+            sdrPosition.Value = 0;
         }
 
         //Methods to display data
@@ -338,6 +357,7 @@ namespace SSAANIP {
         }
         private void btnPlaySong_Click(object sender, RoutedEventArgs e){
             int selectedSongIndex;
+            currentSongId = selectedSongId;
             using (SQLiteConnection conn = new(connectionString))
             using (SQLiteCommand cmd = conn.CreateCommand()){
                 conn.Open();
@@ -349,12 +369,15 @@ namespace SSAANIP {
             List<string> currentSongIdsList = getSongIdsFromAlbumId(playingAlbumId);
             currentSongIds = currentSongIdsList.ToArray();
             songIndex.Clear();
-            for(int i = selectedSongIndex; i < currentSongIds.Length; i++){
+            for(int i = selectedSongIndex+1; i < currentSongIds.Length; i++){
                 songIndex.Enqueue(i);
             }
+            prioNextUp = selectedSongId;
             nextSong();
             mediaElement.Play();
             if(isShuffled) songIndex = shuffle(songIndex);
+            btnPlayPause.Content = "||";
+            isPaused = false;
         }
         private void btnQueueSong_Click(object sender, RoutedEventArgs e){
             queue.Enqueue(selectedSongId);
@@ -362,19 +385,26 @@ namespace SSAANIP {
         }
 
         private void mediaElement_MediaEnded(object sender, RoutedEventArgs e){
-            if (!fromQueue){
-            prevPlayed.Push(currentSongId);
-            }
+            if (!fromQueue) prevPlayed.Push(currentSongId);
             nextSong();
         }
         private void btnNextSong_click(object sender, RoutedEventArgs e){
-            prevPlayed.Push(currentSongId);
+            if (!fromQueue) prevPlayed.Push(currentSongId);
             nextSong();
         }
         private void btnPrevSong_Click(object sender, RoutedEventArgs e){
             if(prevPlayed.Count > 0){
-                songIndex.Enqueue(currentSongIndex);
-                queue.Enqueue(prevPlayed.Pop());
+                if (!fromQueue){
+                    int[] tempSongIndex = songIndex.ToArray();
+                    int length = songIndex.Count;
+                    songIndex.Clear();
+                    songIndex.Enqueue(currentSongIndex);
+                    for(int i =0; i < length; i++) {
+                        songIndex.Enqueue(tempSongIndex[i]);
+                    }
+                }
+                currentSongId = prevPlayed.Pop();
+                prioNextUp = currentSongId;
                 nextSong();
             }
         }
@@ -393,16 +423,7 @@ namespace SSAANIP {
             }
         }
         private void btnStop_Click(object sender, RoutedEventArgs e){
-            updatePosition = false;
-            mediaElement.Stop();
-            queue.Clear();
-            prevPlayed.Clear();
-            btnPlayPause.Content = "⏵";
-            lblSongPlaying.Content = "";
-            lsQueue.ItemsSource = null;
-            mediaElement.Source = null;
-            lblTime.Content = "";
-            sdrPosition.Value = 0;
+            stop();
         }
         private void sdrVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e){
             mediaElement.Volume = e.NewValue / 10;
@@ -414,13 +435,8 @@ namespace SSAANIP {
             }
         }
         private void btnLoopToggle_Click(object sender, RoutedEventArgs e){
-            if(loopMode != 2){
-                loopMode += 1;
-            }
-            else{
-                loopMode = 0;
-            }
-
+            if(loopMode != 2) loopMode += 1;
+            else loopMode = 0;
             switch(loopMode){
                 case 0:
                     btnLoopToggle.Content = "🔁";
@@ -469,60 +485,58 @@ namespace SSAANIP {
                 btnQueueDown.Visibility = Visibility.Visible;
             }
         }
-        private async void btnQueueUp_Click(object sender, RoutedEventArgs e){
+        private void btnQueueUp_Click(object sender, RoutedEventArgs e){
             string[] queueIds = queue.ToArray();
-            string[] queueNames;
             if(lsQueue.SelectedIndex > 0){
                 int selectedIndex = lsQueue.SelectedIndex;
-                string temp = queueIds[selectedIndex-1];
-                queueIds[selectedIndex - 1] = queueIds[selectedIndex];
-                queueIds[selectedIndex] = temp;
-                queueNames = await getNamesFromIDs(queueIds);
+                (queueIds[selectedIndex], queueIds[selectedIndex - 1]) = (queueIds[selectedIndex - 1], queueIds[selectedIndex]);
+                (queueNames[selectedIndex], queueNames[selectedIndex - 1]) = (queueNames[selectedIndex - 1], queueNames[selectedIndex]);
+                lsQueue.ItemsSource = queueNames;
 
                 queue.Clear();
                 foreach (string id in queueIds){
-                    queue.Enqueue(id);
+                    if(id!=null) queue.Enqueue(id);
                 }
-
-                lsQueue.ItemsSource = queueNames;
             }
         }
         private async void btnQueueDown_Click(object sender, RoutedEventArgs e){
             string[] queueIds = queue.ToArray();
-            string[] queueNames;
             if (lsQueue.SelectedIndex > 0 && lsQueue.SelectedIndex < queue.Count-1){
                 int selectedIndex = lsQueue.SelectedIndex;
-                string temp = queueIds[selectedIndex + 1];
-                queueIds[selectedIndex + 1] = queueIds[selectedIndex];
-                queueIds[selectedIndex] = temp;
-                queueNames = await getNamesFromIDs(queueIds);
-
+                (queueIds[selectedIndex], queueIds[selectedIndex + 1]) = (queueIds[selectedIndex + 1], queueIds[selectedIndex]);
+                (queueNames[selectedIndex], queueNames[selectedIndex + 1]) = (queueNames[selectedIndex + 1], queueNames[selectedIndex]);
+                lsQueue.ItemsSource = queueNames;
                 queue.Clear();
                 foreach (string id in queueIds){
                     queue.Enqueue(id);
                 }
 
-                lsQueue.ItemsSource = queueNames;
             }
         }
         private async void btnQueueDelete_Click(object sender, RoutedEventArgs e){
             string[] queueIds = queue.ToArray();
-            string[] queueNames;
+
             if (lsQueue.SelectedIndex > 0){
                 int selectedIndex = lsQueue.SelectedIndex;
                 for(int i = selectedIndex; i < queueIds.Length-1; i++){
                     queueIds[i] = queueIds[i+1];
+                    queueNames[i] = queueNames[i+1];
                 }
                 queueIds[queueIds.Length-1] = null;
-                queueNames = await getNamesFromIDs(queueIds);
-
                 queue.Clear();
                 foreach (string id in queueIds){
                     queue.Enqueue(id);
                 }
-
                 lsQueue.ItemsSource = queueNames;
             }
+        }
+        private void btnUserManage_Click(object sender, RoutedEventArgs e){
+            stop();
+            parent.Frame.Content = new userMgmt(parent, req);
+        }
+        private void btnClearQueue_Click(object sender, RoutedEventArgs e){
+            queue.Clear();
+            lsQueue.ItemsSource = null;
         }
     }
 }
