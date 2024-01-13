@@ -12,8 +12,8 @@ using System.Text;
 
 namespace SSAANIP{
     public class RequestMethods{ //different requests
-        public string username;
-        public string password;
+        protected string username;
+        protected string password;
         public RequestMethods(string username, string password){
             this.username = username;
             this.password = password;
@@ -88,6 +88,17 @@ namespace SSAANIP{
             rng.GetBytes(salt);
             return Convert.ToHexString(salt);
         }
-        
+        public async Task<IEnumerable<XElement>> sendGetUser(){
+            Request request = new(username, password, "getUser");
+            IEnumerable<XElement> output = await request.sendRequestAsync();
+            return output;
+        }
+        public async Task<IEnumerable<XElement>> sendDeleteUser(string username){
+            if (username == "self") username = this.username;
+            Request request = new(username, password, "deleteUser",$"&username={username}");
+            IEnumerable<XElement> output = await request.sendRequestAsync();
+            return output;
+        }
+
     }
 }
