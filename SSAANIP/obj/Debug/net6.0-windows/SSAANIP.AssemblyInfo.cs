@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SSAANIP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d04c8f3f57fc14753a8819011863198a4a9f41e2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("SSAANIP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SSAANIP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

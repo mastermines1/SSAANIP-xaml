@@ -47,6 +47,11 @@
             </Button.RenderTransform>
         </Button>
         <Button Name="btnQueueDelete" Content="🗑️" Visibility="Hidden" HorizontalAlignment="Left" Height="23" Margin="693,59,0,0" VerticalAlignment="Top" Width="18" Click="btnQueueDelete_Click" />
+        <Button Name="btnUserManage" Content="Manage user" HorizontalAlignment="Left" Height="27" Margin="75,0,0,0" VerticalAlignment="Top" Width="82" Click="btnUserManage_Click"/>
+        <Label Content="Albums" HorizontalAlignment="Left" Height="27" Margin="154,55,0,0" VerticalAlignment="Top" Width="125" HorizontalContentAlignment="Center"/>
+        <Label Content="Artists" HorizontalAlignment="Left" Height="27" Margin="19,55,0,0" VerticalAlignment="Top" Width="125" HorizontalContentAlignment="Center"/>
+        <Label Content="Songs" HorizontalAlignment="Left" Height="27" Margin="288,55,0,0" VerticalAlignment="Top" Width="230" HorizontalContentAlignment="Center"/>
+        <Button Name="btnClearQueue" Content="Clear Queue" Visibility="Hidden" HorizontalAlignment="Left" Height="25" Margin="636,276,0,0" VerticalAlignment="Top" Width="75" Click="btnClearQueue_Click"/>
 
 
 
