@@ -12,7 +12,7 @@ using System.Text;
 
 namespace SSAANIP{
     public class RequestMethods{ //different requests
-        protected string username;
+        public string username;
         protected string password;
         public RequestMethods(string username, string password){
             this.username = username;
@@ -88,7 +88,8 @@ namespace SSAANIP{
             rng.GetBytes(salt);
             return Convert.ToHexString(salt);
         }
-        public async Task<IEnumerable<XElement>> sendGetUser(){
+        public async Task<IEnumerable<XElement>> sendGetUser(string username){
+            if (username == null) username = this.username;
             Request request = new(username, password, "getUser");
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
@@ -99,6 +100,9 @@ namespace SSAANIP{
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-
+        public async void sendCreateUser(string newUserName,string newPassword, string isAdmin){
+            Request request = new(this.username, this.password,"createUser");
+            request.sendCreateUser(newUserName,newPassword,isAdmin);
+        }
     }
 }

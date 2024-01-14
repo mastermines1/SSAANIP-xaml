@@ -41,7 +41,9 @@ namespace SSAANIP {
             parent = master;
             this.req = req;
             fetch = new(connectionString, req);
-            
+
+            req.sendCreateUser("test1231231","test","false");
+
             if (!File.Exists("tracks.db")) { //checks if file exists
                 File.Create("tracks.db");
                 using (SQLiteConnection conn = new(connectionString))
