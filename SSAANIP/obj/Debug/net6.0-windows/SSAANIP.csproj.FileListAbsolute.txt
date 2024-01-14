@@ -65,13 +65,6 @@ C:\Users\Miles_Campbell\Source\Repos\mastermines1\SSAANIP-xaml\SSAANIP\obj\Debug
 C:\Users\Miles_Campbell\Source\Repos\mastermines1\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.pdb
 C:\Users\Miles_Campbell\Source\Repos\mastermines1\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.genruntimeconfig.cache
 C:\Users\Miles_Campbell\Source\Repos\mastermines1\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\ref\SSAANIP.dll
-C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.Core.dll
-C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.dll
-C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.Asio.dll
-C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.Midi.dll
-C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.Wasapi.dll
-C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.WinForms.dll
-C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\NAudio.WinMM.dll
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.dll
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.Asio.dll
 C:\Users\Miles\source\repos\SSAANIP\SSAANIP\bin\Debug\net6.0-windows\NAudio.Core.dll
@@ -116,3 +109,4 @@ C:\Users\Miles\Source\Repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\refint
 C:\Users\Miles\Source\Repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.pdb
 C:\Users\Miles\Source\Repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.genruntimeconfig.cache
 C:\Users\Miles\Source\Repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\ref\SSAANIP.dll
+C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\Newtonsoft.Json.dll

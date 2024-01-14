@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Miles\source\repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\
+C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\
 SSAANIP
 none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
-C:\Users\Miles\source\repos\SSAANIP-xaml\SSAANIP\App.xaml
+C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\App.xaml
 51149743872
 
 12-206958678
-195754740058
+1961416428578
 login.xaml;MainWindow.xaml;master.xaml;socketPage.xaml;userMgmt.xaml;
 
-True
+False
 
