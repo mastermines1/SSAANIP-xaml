@@ -1,4 +1,0 @@
-TO DO
-
-fix shuffle it currently shuffles jus whtas left in upnext
-probably broekn in differnet ways too
