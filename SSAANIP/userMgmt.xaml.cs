@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,7 @@ namespace SSAANIP{
     public partial class userMgmt : Page{
         master master;
         RequestMethods req;
+        string connectionString = "Data source=data.db";
         public userMgmt(master master, RequestMethods req){
             InitializeComponent();
             this.master = master;
@@ -43,10 +45,16 @@ namespace SSAANIP{
             if (confirmPass.Password != ""){
                 if (await confirmPassword(confirmPass)){
                     if (MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
-                        string test = "test";
-                        //req.sendDeleteUser("self");
-                        lblConfirm.Text = "";
-                        confirmPass.Visibility = Visibility.Hidden;
+                        await req.sendDeleteUser("self");
+                        using (SQLiteConnection conn = new(connectionString))
+                        using (var cmd = conn.CreateCommand()){
+                            conn.Open();
+                            cmd.CommandText = "DELETE FROM tblUsers WHERE username = @username";
+                            cmd.Parameters.Add(new("@username", req.username));
+                            cmd.ExecuteScalar();
+                        }
+
+                        master.Frame.Content = new loginPage(master);
                     }
                 }
                 else{ //incorrect password
@@ -54,39 +62,92 @@ namespace SSAANIP{
                 }
             }
             else{
+                btnDeleteSelf.Content = "Continue";
                 lblConfirm.Text = "Please confirm your password";
             }
 
         }
         private async void btnAdmin_Click(object sender, RoutedEventArgs e){
-            if (await confirmPassword(confirmPass)){
-                adminPanel.Visibility = Visibility.Visible;
+            if(adminPanel.Visibility == Visibility.Visible){
+                adminPanel.Visibility = Visibility.Hidden;
+            }else {
+                if (await confirmPassword(confirmPass)){
+                    adminPanel.Visibility = Visibility.Visible;
+                    lblConfirm.Text = "";
+                    confirmPass.Password = "";
+                    confirmPass.Visibility = Visibility.Hidden;
+                    btnAdmin.Content = "Admin panel";
+                } else{
+                    confirmPass.Visibility = Visibility.Visible;
+                    lblConfirm.Text = "Confirm your password.";
+                    btnAdmin.Content = "Continue";
+                }
+                lsUserNames.Items.Clear();
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "SELECT userName FROM tblUsers";
+                    using (SQLiteDataReader reader = cmd.ExecuteReader()){
+                        while (reader.Read()){
+                            string newUserName = reader.GetString(0);
+                            if(newUserName.ToLower() != req.username) lsUserNames.Items.Add(newUserName);
+                        }
+                    }
+                }
             }
         }
         private void btnback_Click(object sender, RoutedEventArgs e){
             master.Frame.Content = new MainWindow(master, req);
-        }
-        private void btnDeleteSelectedUser_Click(object sender, RoutedEventArgs e){
-            if(lsUsers.SelectedItem != null){
-                if (MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
-                    req.sendDeleteUser(lsUsers.SelectedItem.ToString());
-                }
-            }
-
-        }
-        private void btnMakeAdmin_Click(object sender, RoutedEventArgs e){
-
         }
         private void btnAddUser_Click(object sender, RoutedEventArgs e){
             if(pwdPassword.Password == pwdConfirmPassword.Password){
                 string username = txtUserName.Text;
                 string password = pwdPassword.Password;
                 string isAdmin = checkBoxAdmin.IsChecked.ToString();
-                //req.sendCreateUser(username, password, isAdmin);
+                req.sendCreateUser(username, password, isAdmin);
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "INSERT INTO tblUsers VALUES (@username,@isAdmin)";
+                    cmd.Parameters.Add(new("@username", username));
+                    cmd.Parameters.Add(new("@isAdmin", isAdmin));
+                    cmd.ExecuteScalar();
+                }
+                lsUserNames.Items.Add(username);
                 lblOutput.Content = $"User {username} Created";
             }
             else{
-                lblOutput.Content = "Passwords dont match";
+                lblOutput.Content = "Passwords do not match";
+            }
+        }
+        private void lsUserNames_SelectionChanged(object sender, SelectionChangedEventArgs e){
+            if(lsUserNames.SelectedItem != null){
+                userPanel.Visibility = Visibility.Visible;
+                txtDisplayUserName.Text = lsUserNames.SelectedItem.ToString();
+                string isAdmin;
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "SELECT isAdmin FROM tblUsers WHERE username = @username";
+                    cmd.Parameters.Add(new("@username", lsUserNames.SelectedItem.ToString()));
+                    isAdmin = cmd.ExecuteScalar().ToString();
+                }
+                if (isAdmin == "true") ckbIsAdmin.IsChecked = true;
+                else ckbIsAdmin.IsChecked = false;
+            }
+        }
+        private async void btnDeleteUser_Click(object sender, RoutedEventArgs e){
+            if (lsUserNames.SelectedItem != null && MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
+                await req.sendDeleteUser(lsUserNames.SelectedItem.ToString());
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "DELETE FROM tblUsers WHERE username = @username";
+                    cmd.Parameters.Add(new("@username", lsUserNames.SelectedItem.ToString()));
+                    cmd.ExecuteScalar();
+                }
+                userPanel.Visibility = Visibility.Hidden;
+                lsUserNames.Items.Remove(lsUserNames.SelectedItem);
             }
         }
     }

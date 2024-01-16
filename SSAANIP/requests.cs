@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.IO;
 using System.Text;
-
-
-
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Runtime.InteropServices;
 
 namespace SSAANIP{
     public class RequestMethods{ //different requests
-        public string username;
+        readonly public string username; 
         protected string password;
         public RequestMethods(string username, string password){
             this.username = username;
@@ -89,20 +89,88 @@ namespace SSAANIP{
             return Convert.ToHexString(salt);
         }
         public async Task<IEnumerable<XElement>> sendGetUser(string username){
-            if (username == null) username = this.username;
-            Request request = new(username, password, "getUser");
+            string extraParms = "&username=" + username;
+            if (username == null) extraParms = "&username="+this.username;
+            Request request = new(this.username, password, "getUser",extraParms);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendDeleteUser(string username){
+        public async Task<IEnumerable<XElement>> sendGetUsers(){
+            Request request = new(username, password, "getUsers");
+            IEnumerable<XElement> output = await request.sendRequestAsync();
+            return output;
+        }
+        public async void sendCreateUser(string username, string password, string isAdmin){
+            HttpClient client = new HttpClient();
+            string socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
+            string token = await getTokenJson(socket);
+            if (token != null){
+                string create_user_url = $"http://{socket}/api/user";
+                client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
+                string json = $"{{\"isAdmin\":{isAdmin.ToLower()},\"username\":\"{username}\",\"name\":\"{username}\",\"password\":\"{password}\"}}";
+                StringContent stringContent = new(json);
+                HttpResponseMessage create_user_response = await client.PostAsync(create_user_url, stringContent);
+                string responseBody = await create_user_response.Content.ReadAsStringAsync();
+            }
+        }
+        public async Task sendDeleteUser(string username){
             if (username == "self") username = this.username;
-            Request request = new(username, password, "deleteUser",$"&username={username}");
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
+
+            string socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
+            HttpClient client = new HttpClient();
+            string token = await getTokenJson(socket);
+            if (token != null){
+                string delete_user_url = $"http://{socket}/api/user/{await getIdJson(socket, token, username)}";
+                client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
+                HttpResponseMessage  delete_user_response = await client.DeleteAsync(delete_user_url);
+                string responseBody = await delete_user_response.Content.ReadAsStringAsync();
+            }
         }
-        public async void sendCreateUser(string newUserName,string newPassword, string isAdmin){
-            Request request = new(this.username, this.password,"createUser");
-            request.sendCreateUser(newUserName,newPassword,isAdmin);
+        public async Task<string> getTokenJson(string socket){
+            HttpClient client = new HttpClient();
+            string login_url = $"http://{socket}/auth/login";
+            Dictionary<string, string> login_data = new(){
+                {"username",this.username}, {"password",this.password},
+            };
+            string json = JsonConvert.SerializeObject(login_data);
+            StringContent stringContent = new(json);
+            HttpResponseMessage login_response = await client.PostAsync(login_url, stringContent);
+            login_response.EnsureSuccessStatusCode();
+            string responseBody = await login_response.Content.ReadAsStringAsync();
+            JObject response = (JObject)JToken.Parse(responseBody);
+            return response.SelectToken("token").ToString();
+        }
+        public async Task<string> getIdJson(string socket, string token, string username){
+            HttpClient client = new HttpClient();
+            if(username != this.username) {
+                string fetch_url = $"http://{socket}/api/user";
+                client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
+                HttpResponseMessage fetch_response = await client.GetAsync(fetch_url);
+                fetch_response.EnsureSuccessStatusCode();
+                string responseBody = await fetch_response.Content.ReadAsStringAsync();
+                JArray response = JArray.Parse(responseBody);
+
+                foreach (JToken response_object in response.Children()){
+                    if (response_object["userName"].ToString() == username){
+                        return response_object["id"].ToString();
+                    }
+                }
+            }
+            else{
+                string fetch_url = $"http://{socket}/auth/login";
+                Dictionary<string, string> userInfo = new(){
+                    {"username",this.username},{"password",this.password}
+                };
+                StringContent stringContent = new(JsonConvert.SerializeObject(userInfo));
+                HttpResponseMessage fetch_response = await client.PostAsync(fetch_url,stringContent);
+                fetch_response.EnsureSuccessStatusCode();
+                string responseBody = await fetch_response.Content.ReadAsStringAsync();
+                JObject response = JObject.Parse(responseBody);
+                return response["id"].ToString();
+            }
+
+            return "temp";
+
         }
     }
 }

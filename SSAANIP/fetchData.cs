@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Xml.Linq;
 using System.Linq;
+using System.Windows.Controls.Primitives;
 
 namespace SSAANIP{
     public class fetchData{
@@ -23,7 +24,7 @@ namespace SSAANIP{
             }
             updateArtists();
         }
-        public async void updateArtists(){
+        private async void updateArtists(){
             List<string> artistsID = new();
             IEnumerable<XElement> indexes = await req.sendGetIndexes();
             foreach (XElement element in indexes.Elements().Elements().Elements()){ //get every artist id
@@ -37,14 +38,14 @@ namespace SSAANIP{
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "INSERT INTO tblArtists VALUES (@id,@name)";
-                    cmd.Parameters.Add(new SQLiteParameter("@id", id));
-                    cmd.Parameters.Add(new SQLiteParameter("@name", artistName));
+                    cmd.Parameters.Add(new("@id", id));
+                    cmd.Parameters.Add(new("@name", artistName));
                     cmd.ExecuteScalar();
                 }
                 updateAlbums(id);
             }
         }
-        public async void updateAlbums(string artistID){
+        private async void updateAlbums(string artistID){
             var artistData = await req.sendGetArtist(artistID);
             foreach (XElement album in artistData.Elements().Elements()){
                 string currentAlbumId = album.FirstAttribute.Value.ToString();
@@ -52,9 +53,9 @@ namespace SSAANIP{
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "INSERT INTO tblAlbums VALUES (@id,@name,@duration)";
-                    cmd.Parameters.Add(new SQLiteParameter("@id", currentAlbumId));
-                    cmd.Parameters.Add(new SQLiteParameter("@name", album.Attribute("name").Value));
-                    cmd.Parameters.Add(new SQLiteParameter("@duration", album.Attribute("duration").Value));
+                    cmd.Parameters.Add(new("@id", currentAlbumId));
+                    cmd.Parameters.Add(new("@name", album.Attribute("name").Value));
+                    cmd.Parameters.Add(new("@duration", album.Attribute("duration").Value));
 
                     cmd.ExecuteScalar();
                 }
@@ -63,14 +64,14 @@ namespace SSAANIP{
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "INSERT INTO tblAlbumArtistLink (artistId,albumId) VALUES (@artistId,@albumId)";
-                    cmd.Parameters.Add(new SQLiteParameter("@artistId", artistID));
-                    cmd.Parameters.Add(new SQLiteParameter("@albumId", currentAlbumId));
+                    cmd.Parameters.Add(new("@artistId", artistID));
+                    cmd.Parameters.Add(new("@albumId", currentAlbumId));
                     cmd.ExecuteScalar();
                 }
                 updateTracks(currentAlbumId);
             }
         }
-        public async void updateTracks(string albumID){
+        private async void updateTracks(string albumID){
             var albumData = await req.sendGetAlbum(albumID);
             int index = 0;
             foreach (XElement track in albumData.Elements().Elements()){
@@ -78,22 +79,54 @@ namespace SSAANIP{
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "INSERT INTO tblSongs VALUES (@id,@name,@duration,@index)";
-                    cmd.Parameters.Add(new SQLiteParameter("@index", index));
-                    cmd.Parameters.Add(new SQLiteParameter("@id", track.FirstAttribute.Value));
-                    cmd.Parameters.Add(new SQLiteParameter("@name", track.Attribute("title").Value));
-                    cmd.Parameters.Add(new SQLiteParameter("@duration", track.Attribute("duration").Value));
+                    cmd.Parameters.Add(new("@index", index));
+                    cmd.Parameters.Add(new("@id", track.FirstAttribute.Value));
+                    cmd.Parameters.Add(new("@name", track.Attribute("title").Value));
+                    cmd.Parameters.Add(new("@duration", track.Attribute("duration").Value));
                     cmd.ExecuteScalar();
                 }
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "INSERT INTO tblAlbumSongLink (albumId,songId) VALUES (@albumId,@songId)";
-                    cmd.Parameters.Add(new SQLiteParameter("@albumId", albumID));
-                    cmd.Parameters.Add(new SQLiteParameter("@songId", track.FirstAttribute.Value));
+                    cmd.Parameters.Add(new("@albumId", albumID));
+                    cmd.Parameters.Add(new("@songId", track.FirstAttribute.Value));
                     cmd.ExecuteScalar();
                 }
                 index += 1;
             }
         }
+        public async void updateUsers(){
+            IEnumerable<XElement> usersInfo;
+            var authenticatedUserInfo = await req.sendGetUser(null);
+            if(authenticatedUserInfo.Elements().First().Attribute("adminRole").Value.ToString() == "true"){
+                usersInfo = await req.sendGetUsers();
+            } else {usersInfo = authenticatedUserInfo;}
+
+            foreach(XElement user in usersInfo.Elements().Elements()){
+                bool alrExists = false;
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "SELECT userName FROM tblUsers WHERE userName = @username";
+                    cmd.Parameters.Add(new("@username", user.Attribute("username").Value));
+                    if(cmd.ExecuteScalar().ToString() != null) alrExists = true;
+                }
+                if (!alrExists){
+                    using (SQLiteConnection conn = new(connectionString))
+                    using (var cmd = conn.CreateCommand()){
+                        conn.Open();
+                        cmd.CommandText = "INSERT INTO tblUsers VALUES (@userName,@isAdmin)";
+                        cmd.Parameters.Add(new("@userName", user.Attribute("username").Value.ToString()));
+                        cmd.Parameters.Add(new("@isAdmin", user.Attribute("adminRole").Value.ToString()));
+                        cmd.ExecuteScalar();
+                    }
+                }
+            }
+        }
+
+
+
+
     }
 }

@@ -15,7 +15,7 @@ namespace SSAANIP {
         readonly fetchData fetch;
         readonly RequestMethods req;
         public master parent;
-        public string connectionString = "Data source=tracks.db";
+        public string connectionString = "Data source=data.db";
         string selectedArtistId;
         string selectedAlbumId;
         string selectedSongId;
@@ -41,11 +41,11 @@ namespace SSAANIP {
             parent = master;
             this.req = req;
             fetch = new(connectionString, req);
+            fetch.updateUsers();
 
-            req.sendCreateUser("test1231231","test","false");
 
-            if (!File.Exists("tracks.db")) { //checks if file exists
-                File.Create("tracks.db");
+            if (!File.Exists("data.db")) { //checks if file exists
+                File.Create("data.db");
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()) {
                     conn.Open();
@@ -124,7 +124,7 @@ namespace SSAANIP {
                 conn.Open();
 
                 cmd.CommandText = "SELECT songID FROM tblAlbumSongLink WHERE albumID = @id";
-                cmd.Parameters.Add(new SQLiteParameter("@id", albumId));
+                cmd.Parameters.Add(new("@id", albumId));
                 using SQLiteDataReader reader = cmd.ExecuteReader();
                 while (reader.Read()){
                     songIds.Add(reader.GetString(0));
@@ -139,7 +139,7 @@ namespace SSAANIP {
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
                 cmd.CommandText = "SELECT songDuration FROM tblSongs WHERE songId = @id";
-                cmd.Parameters.Add(new SQLiteParameter("@id", tempSongId));
+                cmd.Parameters.Add(new("@id", tempSongId));
                 currentSongDuration = Convert.ToInt32(cmd.ExecuteScalar());
             }
             await Task.Delay(1000);
@@ -217,7 +217,7 @@ namespace SSAANIP {
             using (var cmd = conn.CreateCommand()) {
                 conn.Open();
                 cmd.CommandText = "SELECT songId FROM tblAlbumSongLink WHERE albumid = @id";
-                cmd.Parameters.Add(new SQLiteParameter("@id", albumId));
+                cmd.Parameters.Add(new("@id", albumId));
                 using SQLiteDataReader reader = cmd.ExecuteReader();{
                     while (reader.Read()){
                         songIds.Add(reader.GetString(0));
@@ -230,7 +230,7 @@ namespace SSAANIP {
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "SELECT songName FROM tblSongs WHERE songId = @id";
-                    cmd.Parameters.Add(new SQLiteParameter("@id", s));
+                    cmd.Parameters.Add(new("@id", s));
                     using SQLiteDataReader reader = cmd.ExecuteReader();{
                         while (reader.Read()){
                             songNames.Add(reader.GetString(0));
@@ -244,6 +244,7 @@ namespace SSAANIP {
 
         //Event handlers
         private void btnUpdateDb_clicked(object sender, System.Windows.RoutedEventArgs e) {
+            stop();
             lsArtist.ItemsSource = null;
             lsAlbums.ItemsSource = null;
             lsSongs.ItemsSource = null;
@@ -268,7 +269,7 @@ namespace SSAANIP {
                 using (var cmd = conn.CreateCommand()) {
                     conn.Open();
                     cmd.CommandText = "SELECT artistId FROM tblArtists WHERE artistName = @name";
-                    cmd.Parameters.Add(new SQLiteParameter("@name", selectedArtist));
+                    cmd.Parameters.Add(new("@name", selectedArtist));
                     selectedArtistId = cmd.ExecuteScalar().ToString();
                 }
             }
@@ -278,7 +279,7 @@ namespace SSAANIP {
             using (var cmd = conn.CreateCommand()) {
                 conn.Open();
                 cmd.CommandText = "SELECT albumID FROM tblAlbumArtistLink WHERE artistId = @id";
-                cmd.Parameters.Add(new SQLiteParameter("@id", selectedArtistId));
+                cmd.Parameters.Add(new("@id", selectedArtistId));
                 using SQLiteDataReader reader = cmd.ExecuteReader(); {
                     while (reader.Read()) {
                         albumIds.Add(reader.GetString(0));
@@ -291,7 +292,7 @@ namespace SSAANIP {
                 var cmd = conn.CreateCommand();
                 conn.Open();
                 cmd.CommandText = "SELECT albumName FROM tblAlbums WHERE albumId = @id ORDER by albumName DESC";
-                cmd.Parameters.Add(new SQLiteParameter("@id", albumId));
+                cmd.Parameters.Add(new("@id", albumId));
                 albumNames.Add(cmd.ExecuteScalar().ToString());
                 
             }
@@ -308,7 +309,7 @@ namespace SSAANIP {
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "SELECT albumId FROM tblAlbums WHERE albumName = @name";
-                    cmd.Parameters.Add(new SQLiteParameter("@name", selectedAlbumName));
+                    cmd.Parameters.Add(new("@name", selectedAlbumName));
                     using SQLiteDataReader reader = cmd.ExecuteReader(); {
                         while (reader.Read()){
                             albumIds.Add(reader.GetString(0));
@@ -321,7 +322,7 @@ namespace SSAANIP {
                     var cmd = conn.CreateCommand();
                     conn.Open();
                     cmd.CommandText = "SELECT artistID FROM tblAlbumArtistLink WHERE albumID = @id";
-                    cmd.Parameters.Add(new SQLiteParameter("@id", albumId));
+                    cmd.Parameters.Add(new("@id", albumId));
                     object result = cmd.ExecuteScalar();
                     if (result.ToString() == selectedArtistId){
                         this.selectedAlbumId = albumId;
@@ -340,7 +341,7 @@ namespace SSAANIP {
                 using SQLiteCommand cmd = conn.CreateCommand(); {
                     conn.Open();
                     cmd.CommandText = "SELECT songID FROM tblSongs WHERE songName = @name";
-                    cmd.Parameters.Add(new SQLiteParameter("@name", currentSongName));
+                    cmd.Parameters.Add(new("@name", currentSongName));
                     selectedSongId = cmd.ExecuteScalar().ToString();
                 }
                 btnPlaySong.Visibility = Visibility.Visible;
@@ -364,7 +365,7 @@ namespace SSAANIP {
             using (SQLiteCommand cmd = conn.CreateCommand()){
                 conn.Open();
                 cmd.CommandText = "SELECT songIndex FROM tblSongs WHERE songId = @id";
-                cmd.Parameters.Add(new SQLiteParameter("@id",selectedSongId));
+                cmd.Parameters.Add(new("@id",selectedSongId));
                 selectedSongIndex = Convert.ToInt32(cmd.ExecuteScalar());
             }
             playingAlbumId = selectedAlbumId;
