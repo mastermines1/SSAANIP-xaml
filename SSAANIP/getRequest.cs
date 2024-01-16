@@ -21,10 +21,8 @@ namespace SSAANIP{
         private string clientName; //the name of the client in use
         private string extraParms;
         private string password;
-        SQLiteConnection conn;
         
         public Request(string username, string password, string request){
-            conn = new SQLiteConnection("Data source=usrDB.db");
             this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
             this.username = username;
             this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
@@ -34,7 +32,6 @@ namespace SSAANIP{
             this.password = password;
         }
         public Request(string username, string password, string request, string extraParms){
-            conn = new SQLiteConnection("");
             this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
             this.username = username;
             this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
@@ -44,7 +41,6 @@ namespace SSAANIP{
             this.password = password;
         }
         public Request(string username, string password, string request, string socket, string extraParms){
-            conn = new SQLiteConnection("");
             this.socket = socket;
             this.username = username;
             this.version = "";
@@ -52,9 +48,7 @@ namespace SSAANIP{
             this.clientName = "SocketTest";
             this.extraParms = extraParms;
             this.password = password;
-
         }
-
         public async Task<IEnumerable<XElement>> sendRequestAsync(){
             HttpClient client = new();
             MD5 md5 = MD5.Create();
@@ -70,44 +64,8 @@ namespace SSAANIP{
             IEnumerable<XElement> collection = XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
             return collection;
         }
-        public async void sendCreateUser(string newUsername, string newPassword, string IsAdmin){
-            HttpClient client = new HttpClient();
 
-            string login_url = $"http://{socket}/auth/login";
-            Dictionary<string, string> login_data = new(){
-                {"username",this.username}, {"password",this.password},
-            };
-            string json = JsonConvert.SerializeObject(login_data);
-            StringContent stringContent = new(json, System.Text.Encoding.UTF8, "application/json");
-            HttpResponseMessage login_response = await client.PostAsync(login_url, stringContent);
-            login_response.EnsureSuccessStatusCode();
-            string responseBody = await login_response.Content.ReadAsStringAsync();
-            JObject response = (JObject)JToken.Parse(responseBody);
-            var token = response.SelectToken("token").ToString();
-
-
-            if (token != null){
-                string create_user_url = $"http://100.73.164.110:4533/api/user";
-
-                Dictionary<string, string> user_data = new(){
-                    {"isAdmin", IsAdmin},
-                    {"userName", newUsername},
-                    {"name", newUsername},
-                    {"password", newPassword},
-                };
-
-                client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
-                //json = $"{{\"isAdmin\":{IsAdmin},\"username\":\"{newUsername}\",\"name\":\"{newUsername}\",\"password\":\"{newPassword}\"}}";
-                //json = JsonConvert.SerializeObject (user);
-                var content = new FormUrlEncodedContent(user_data);
-                //stringContent = new(json, System.Text.Encoding.UTF8, "application/json");
-                HttpResponseMessage create_user_response = await client.PostAsync(create_user_url, content);
-                create_user_response.EnsureSuccessStatusCode();
-                responseBody = await create_user_response.Content.ReadAsStringAsync();
-            }
-        }
-        public static string createSalt(int size)
-        { //generates a salt of set size 
+        public static string createSalt(int size){ //generates a salt of set size 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] salt = new byte[size];
             rng.GetBytes(salt);
