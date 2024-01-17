@@ -12,11 +12,15 @@ namespace SSAANIP{
     /// Interaction logic for userMgmt.xaml
     /// </summary>
     public partial class userMgmt : Page{
-        master master;
-        RequestMethods req;
-        string connectionString = "Data source=data.db";
+        readonly master master;
+        readonly RequestMethods req;
+        readonly string connectionString = "Data source=data.db";
         public userMgmt(master master, RequestMethods req){
             InitializeComponent();
+
+            adminPanel.Visibility = Visibility.Hidden;
+            userPanel.Visibility = Visibility.Hidden;
+
             this.master = master;
             this.req = req;
             fetchUserInfo();
@@ -32,10 +36,7 @@ namespace SSAANIP{
             IEnumerable<XElement> data = await tempReq.System("ping");
             if(data.First().Attribute("status").Value == "ok"){
                 return true;
-            }
-            else{
-                return false;
-            }
+            } else return false;
         }
         private void btnLogout_Click(object sender, RoutedEventArgs e){
             master.Frame.Content = new loginPage(master);
@@ -44,18 +45,30 @@ namespace SSAANIP{
             confirmPass.Visibility = Visibility.Visible;
             if (confirmPass.Password != ""){
                 if (await confirmPassword(confirmPass)){
-                    if (MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
-                        await req.sendDeleteUser("self");
-                        using (SQLiteConnection conn = new(connectionString))
-                        using (var cmd = conn.CreateCommand()){
-                            conn.Open();
-                            cmd.CommandText = "DELETE FROM tblUsers WHERE username = @username";
-                            cmd.Parameters.Add(new("@username", req.username));
-                            cmd.ExecuteScalar();
-                        }
-
-                        master.Frame.Content = new loginPage(master);
+                    int noOfAdmins = 0;
+                    using (SQLiteConnection conn = new(connectionString))
+                    using (SQLiteCommand cmd = conn.CreateCommand()){
+                        conn.Open();
+                        cmd.CommandText = "SELECT FROM tblUsers WHERE isAdmin = \"true\"";
+                        noOfAdmins = cmd.ExecuteNonQuery();
                     }
+                    if (noOfAdmins > 0){
+                        if (MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
+                            await req.sendDeleteUser("self");
+                            using (SQLiteConnection conn = new(connectionString))
+                            using (var cmd = conn.CreateCommand()){
+                                conn.Open();
+                                cmd.CommandText = "DELETE FROM tblUsers WHERE username = @username";
+                                cmd.Parameters.Add(new("@username", req.username));
+                                cmd.ExecuteScalar();
+                            }
+
+                            master.Frame.Content = new loginPage(master);
+                        }
+                    } else{
+                        MessageBox.Show("You cannot delete the only admin user.", "Error");
+                    }
+
                 }
                 else{ //incorrect password
                     lblConfirm.Text = "Incorrect password";
@@ -86,7 +99,7 @@ namespace SSAANIP{
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
-                    cmd.CommandText = "SELECT userName FROM tblUsers";
+                    cmd.CommandText = "SELECT userName FROM tblUsers ORDER BY userName ASC";
                     using (SQLiteDataReader reader = cmd.ExecuteReader()){
                         while (reader.Read()){
                             string newUserName = reader.GetString(0);
@@ -103,7 +116,7 @@ namespace SSAANIP{
             if(pwdPassword.Password == pwdConfirmPassword.Password){
                 string username = txtUserName.Text;
                 string password = pwdPassword.Password;
-                string isAdmin = checkBoxAdmin.IsChecked.ToString();
+                bool isAdmin = checkBoxAdmin.IsChecked.Value;
                 req.sendCreateUser(username, password, isAdmin);
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
@@ -148,6 +161,32 @@ namespace SSAANIP{
                 }
                 userPanel.Visibility = Visibility.Hidden;
                 lsUserNames.Items.Remove(lsUserNames.SelectedItem);
+            }
+        }
+        private async void btnSaveData_Click(object sender, RoutedEventArgs e){
+            if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
+                if (ckbChangePassword.IsChecked.Value) await req.sendUpdateUser(txtDisplayUserName.Text.ToLower(), txtPasswordEdit.Text, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
+                else await req.sendUpdateUser(txtDisplayUserName.Text.ToLower(), null, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
+
+                await req.sendUpdateUser(txtDisplayUserName.Text.ToLower(),txtPasswordEdit.Text, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "UPDATE tblUsers SET userName= @newUsername, isAdmin= @newIsAdmin WHERE username = @username";
+                    cmd.Parameters.Add(new("@username", lsUserNames.SelectedItem.ToString()));
+                    cmd.Parameters.Add(new("@newUsername", txtDisplayUserName.Text.ToLower()));
+                    cmd.Parameters.Add(new("@newIsAdmin", ckbIsAdmin.IsChecked.ToString().ToLower()));
+                    cmd.ExecuteScalar();
+                }
+                userPanel.Visibility = Visibility.Hidden;
+                lsUserNames.Items.Remove(lsUserNames.SelectedItem);
+                lsUserNames.Items.Add(txtDisplayUserName.Text);
+            }
+
+        }
+        private async void btnChangePassword_Click(object sender, RoutedEventArgs e){
+            if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
+                await req.sendUpdateUser(req.username, txtNewPassword.Text, "null");
             }
         }
     }

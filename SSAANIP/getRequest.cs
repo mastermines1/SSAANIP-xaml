@@ -14,13 +14,13 @@ using System.Net.Http.Headers;
 
 namespace SSAANIP{
     public class Request{
-        private string socket;  //the socket that the subsonic server is located at
-		private string username; //the username that the user is logged in with
-		private string version; //the version of the server
-        private string request; //the type of request
-        private string clientName; //the name of the client in use
-        private string extraParms;
-        private string password;
+        private readonly string socket;  //the socket that the subsonic server is located at
+		private readonly string username; //the username that the user is logged in with
+		private readonly string version; //the version of the server
+        private readonly string request; //the type of request
+        private readonly string clientName; //the name of the client in use
+        private readonly string extraParms;
+        private readonly string password;
         
         public Request(string username, string password, string request){
             this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
@@ -64,7 +64,6 @@ namespace SSAANIP{
             IEnumerable<XElement> collection = XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
             return collection;
         }
-
         public static string createSalt(int size){ //generates a salt of set size 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] salt = new byte[size];
