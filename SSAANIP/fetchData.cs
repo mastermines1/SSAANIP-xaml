@@ -7,8 +7,8 @@ using System.Windows.Controls.Primitives;
 
 namespace SSAANIP{
     public class fetchData{
-        string connectionString;
-        RequestMethods req;
+        readonly string connectionString;
+        readonly RequestMethods req;
         public fetchData(string connectionString, RequestMethods req){
             this.connectionString = connectionString;
             this.req = req;
@@ -30,7 +30,6 @@ namespace SSAANIP{
             foreach (XElement element in indexes.Elements().Elements().Elements()){ //get every artist id
                 artistsID.Add(element.FirstAttribute.Value);
             }
-
             foreach (string id in artistsID){ //gets the artist name
                 IEnumerable<XElement> responce = await req.sendGetArtist(id);
                 string artistName = responce.Elements().ElementAt(0).FirstAttribute.NextAttribute.Value;
@@ -59,7 +58,6 @@ namespace SSAANIP{
 
                     cmd.ExecuteScalar();
                 }
-
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
@@ -101,32 +99,33 @@ namespace SSAANIP{
             var authenticatedUserInfo = await req.sendGetUser(null);
             if(authenticatedUserInfo.Elements().First().Attribute("adminRole").Value.ToString() == "true"){
                 usersInfo = await req.sendGetUsers();
-            } else {usersInfo = authenticatedUserInfo;}
-
-            foreach(XElement user in usersInfo.Elements().Elements()){
+                usersInfo = usersInfo.Elements().Elements();
+                using SQLiteConnection conn = new(connectionString);
+                using var cmd = conn.CreateCommand();
+                conn.Open();
+                cmd.CommandText = "DELETE FROM tblUsers";
+                cmd.ExecuteScalar();
+            } else {usersInfo = authenticatedUserInfo.Elements();}
+            foreach(XElement user in usersInfo){
                 bool alrExists = false;
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "SELECT userName FROM tblUsers WHERE userName = @username";
-                    cmd.Parameters.Add(new("@username", user.Attribute("username").Value));
-                    if(cmd.ExecuteScalar().ToString() != null) alrExists = true;
+                    cmd.Parameters.Add(new("@username", user.Attribute("username").Value.ToString().ToLower()));
+                    if (cmd.ExecuteNonQuery() != 0) alrExists = true;
                 }
                 if (!alrExists){
                     using (SQLiteConnection conn = new(connectionString))
                     using (var cmd = conn.CreateCommand()){
                         conn.Open();
                         cmd.CommandText = "INSERT INTO tblUsers VALUES (@userName,@isAdmin)";
-                        cmd.Parameters.Add(new("@userName", user.Attribute("username").Value.ToString()));
+                        cmd.Parameters.Add(new("@userName", user.Attribute("username").Value.ToString().ToLower()));
                         cmd.Parameters.Add(new("@isAdmin", user.Attribute("adminRole").Value.ToString()));
                         cmd.ExecuteScalar();
                     }
                 }
             }
         }
-
-
-
-
     }
 }

@@ -110,3 +110,4 @@ C:\Users\Miles\Source\Repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\SSAANI
 C:\Users\Miles\Source\Repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\SSAANIP.genruntimeconfig.cache
 C:\Users\Miles\Source\Repos\SSAANIP-xaml\SSAANIP\obj\Debug\net6.0-windows\ref\SSAANIP.dll
 C:\Users\Miles_Campbell\source\repos\mastermines1\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
+C:\Users\Miles\source\repos\SSAANIP-xaml\SSAANIP\bin\Debug\net6.0-windows\Newtonsoft.Json.dll

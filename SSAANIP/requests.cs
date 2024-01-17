@@ -9,69 +9,68 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 
 namespace SSAANIP{
-    public class RequestMethods{ //different requests
-        readonly public string username; 
+    public class RequestMethods { //different requests
+        readonly public string username;
         protected string password;
-        public RequestMethods(string username, string password){
+        public RequestMethods(string username, string password) {
             this.username = username;
             this.password = password;
         }
-        public async Task<IEnumerable<XElement>> System(string requestType){
+        public async Task<IEnumerable<XElement>> System(string requestType) {
             Request request = new(username, password, requestType);
             return await request.sendRequestAsync();
-            
+
         }
-        public async Task<IEnumerable<XElement>> Browsing(string requestType, string id){
-            if (id != null){
+        public async Task<IEnumerable<XElement>> Browsing(string requestType, string id) {
+            if (id != null) {
                 id = $"&id={id}";
             }
-            Request request = new(username,password, requestType, id);
+            Request request = new(username, password, requestType, id);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendCreatePlaylist(string name, string[] songId){
+        public async Task<IEnumerable<XElement>> sendCreatePlaylist(string name, string[] songId) {
             string extras = $"&name={name}";
-            foreach (string sID in songId){
+            foreach (string sID in songId) {
                 extras += $"&songID={sID}";
             }
             Request request = new(username, password, "createPlaylist", extras);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex){
+        public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex) {
             string extras = string.Empty;
-            if (name != null){
+            if (name != null) {
                 extras += $"&name={name}";
             }
-            else if (comment != null){
+            else if (comment != null) {
                 extras += $"&comment={comment}";
             }
             Request request = new(username, password, "updatePlaylist", extras);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendGetIndexes(){
+        public async Task<IEnumerable<XElement>> sendGetIndexes() {
             Request request = new(username, password, "getIndexes");
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendGetAlbum(string id){
-            Request request = new(username, password, "getAlbum", "&id="+id);
+        public async Task<IEnumerable<XElement>> sendGetAlbum(string id) {
+            Request request = new(username, password, "getAlbum", "&id=" + id);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendGetArtist(string id){
+        public async Task<IEnumerable<XElement>> sendGetArtist(string id) {
             Request request = new(username, password, "getArtist", "&id=" + id);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendStartScan(){
+        public async Task<IEnumerable<XElement>> sendStartScan() {
             Request request = new(username, password, "startScan");
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public string createUrl(string id){
-            HttpClient httpClient = new();
-
+        public string createUrl(string id) {
             MD5 md5 = MD5.Create();
             string salt = createSalt(16);
             byte[] inputBytes = Encoding.ASCII.GetBytes(password + salt);
@@ -82,52 +81,74 @@ namespace SSAANIP{
             return $@"http://{File.ReadAllLines("config.txt")[0].Split("=")[1]}/rest/stream?u={username}&t={authToken}&s={salt}&v={File.ReadAllLines("config.txt")[2].Split("=")[1]}&c={File.ReadAllLines("config.txt")[1].Split("=")[1]}&id={id}";
 
         }
-        public static string createSalt(int size){ //generates a salt of set size 
+        public static string createSalt(int size) { //generates a salt of set size 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] salt = new byte[size];
             rng.GetBytes(salt);
             return Convert.ToHexString(salt);
         }
-        public async Task<IEnumerable<XElement>> sendGetUser(string username){
+        public async Task<IEnumerable<XElement>> sendGetUser(string username) {
             string extraParms = "&username=" + username;
-            if (username == null) extraParms = "&username="+this.username;
-            Request request = new(this.username, password, "getUser",extraParms);
+            if (username == null) extraParms = "&username=" + this.username;
+            Request request = new(this.username, password, "getUser", extraParms);
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async Task<IEnumerable<XElement>> sendGetUsers(){
+        public async Task<IEnumerable<XElement>> sendGetUsers() {
             Request request = new(username, password, "getUsers");
             IEnumerable<XElement> output = await request.sendRequestAsync();
             return output;
         }
-        public async void sendCreateUser(string username, string password, string isAdmin){
-            HttpClient client = new HttpClient();
+        public async void sendCreateUser(string username, string password, bool isAdmin) {
+            HttpClient client = new();
             string socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
             string token = await getTokenJson(socket);
-            if (token != null){
+            if (token != null) {
                 string create_user_url = $"http://{socket}/api/user";
                 client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
-                string json = $"{{\"isAdmin\":{isAdmin.ToLower()},\"username\":\"{username}\",\"name\":\"{username}\",\"password\":\"{password}\"}}";
+                create_data create_data = new(){
+                    userName = username,
+                    name = username,
+                    isAdmin = isAdmin,
+                    password = password
+                };
+                string json = JsonConvert.SerializeObject(create_data);
                 StringContent stringContent = new(json);
-                HttpResponseMessage create_user_response = await client.PostAsync(create_user_url, stringContent);
-                string responseBody = await create_user_response.Content.ReadAsStringAsync();
+                await client.PostAsync(create_user_url, stringContent);
             }
         }
-        public async Task sendDeleteUser(string username){
+        public async Task sendDeleteUser(string username) {
             if (username == "self") username = this.username;
-
             string socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
-            HttpClient client = new HttpClient();
+            HttpClient client = new();
             string token = await getTokenJson(socket);
-            if (token != null){
+            if (token != null) {
                 string delete_user_url = $"http://{socket}/api/user/{await getIdJson(socket, token, username)}";
                 client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
-                HttpResponseMessage  delete_user_response = await client.DeleteAsync(delete_user_url);
-                string responseBody = await delete_user_response.Content.ReadAsStringAsync();
+                await client.DeleteAsync(delete_user_url);
             }
         }
-        public async Task<string> getTokenJson(string socket){
-            HttpClient client = new HttpClient();
+        public async Task sendUpdateUser(string newUsername,string newPassword, string newIsAdmin){
+            string socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
+            HttpClient client = new();
+            string token = await getTokenJson(socket);
+            if (token != null){
+                string update_user_url = $"http://{socket}/api/user/{await getIdJson(socket, token, newUsername)}";
+                client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
+                update_data update_data = new();
+
+                if (newIsAdmin == "true") update_data.isAdmin = true;
+                else if (newIsAdmin == "false") update_data.isAdmin = false;
+                if (newUsername != null) update_data.userName = username;
+                if (newPassword != null) update_data.password = newPassword;
+                string json = JsonConvert.SerializeObject(update_data);
+                StringContent stringContent = new(json);
+                await client.PutAsync(update_user_url, stringContent);
+            }
+        }
+
+        public async Task<string> getTokenJson(string socket) {
+            HttpClient client = new();
             string login_url = $"http://{socket}/auth/login";
             Dictionary<string, string> login_data = new(){
                 {"username",this.username}, {"password",this.password},
@@ -140,9 +161,9 @@ namespace SSAANIP{
             JObject response = (JObject)JToken.Parse(responseBody);
             return response.SelectToken("token").ToString();
         }
-        public async Task<string> getIdJson(string socket, string token, string username){
-            HttpClient client = new HttpClient();
-            if(username != this.username) {
+        public async Task<string> getIdJson(string socket, string token, string username) {
+            HttpClient client = new();
+            if (username != this.username) {
                 string fetch_url = $"http://{socket}/api/user";
                 client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
                 HttpResponseMessage fetch_response = await client.GetAsync(fetch_url);
@@ -150,27 +171,36 @@ namespace SSAANIP{
                 string responseBody = await fetch_response.Content.ReadAsStringAsync();
                 JArray response = JArray.Parse(responseBody);
 
-                foreach (JToken response_object in response.Children()){
-                    if (response_object["userName"].ToString() == username){
+                foreach (JToken response_object in response.Children()) {
+                    if (response_object["userName"].ToString() == username) {
                         return response_object["id"].ToString();
                     }
                 }
             }
-            else{
+            else {
                 string fetch_url = $"http://{socket}/auth/login";
                 Dictionary<string, string> userInfo = new(){
                     {"username",this.username},{"password",this.password}
                 };
                 StringContent stringContent = new(JsonConvert.SerializeObject(userInfo));
-                HttpResponseMessage fetch_response = await client.PostAsync(fetch_url,stringContent);
+                HttpResponseMessage fetch_response = await client.PostAsync(fetch_url, stringContent);
                 fetch_response.EnsureSuccessStatusCode();
                 string responseBody = await fetch_response.Content.ReadAsStringAsync();
                 JObject response = JObject.Parse(responseBody);
                 return response["id"].ToString();
             }
-
-            return "temp";
-
+            return "error";
+        }
+        public class create_data{
+            public string userName { get; set; }
+            public string password { get; set; }
+            public bool isAdmin { get; set; }
+            public string name { get; set; }
+        }
+         public class update_data {
+            public string userName { get; set; }
+            public bool isAdmin { get; set; }
+            public string password { get; set; }
         }
     }
 }
