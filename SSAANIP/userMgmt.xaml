@@ -21,7 +21,7 @@
         <Button Name="btnChangePassword" Content="Update" HorizontalAlignment="Left" Height="35" Margin="150,116,0,0" VerticalAlignment="Top" Width="112" Click="btnChangePassword_Click"/>
 
 
-        <Grid Name="adminPanel" Visibility="Visible">
+        <Grid Name="adminPanel" Visibility="Hidden">
             <!--User creation-->
             <Label Content="Add user" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Height="38" Margin="272,16,0,0" VerticalAlignment="Top" Width="108"  FontWeight="Bold" FontSize="16"/>
             <Label Content="Username:" HorizontalAlignment="Left" Height="25" Margin="272,41,0,0" VerticalAlignment="Top" Width="108" />

@@ -9,25 +9,23 @@ using System.Xml.Linq;
 namespace SSAANIP{
     public partial class userMgmt : Page{
         readonly protected master master;
-        readonly protected RequestMethods req;
+        readonly protected Request req;
         readonly protected string connectionString = "Data source=data.db";
-        public userMgmt(master master, RequestMethods req){
+        public userMgmt(master master, Request req){
             InitializeComponent();
-            adminPanel.Visibility = Visibility.Hidden;
-            userPanel.Visibility = Visibility.Hidden;
             this.master = master;
             this.req = req;
             fetchUserInfo();
         }
         public async void fetchUserInfo(){
-            IEnumerable<XElement> userData = await req.sendGetUser(null);
+            IEnumerable<XElement> userData = await req.sendRequest("getUser", "&id=" + req.username);
             lblUserName.Content = "Username: " + userData.Elements().First().FirstAttribute.Value;
             if (userData.Elements().First().Attribute("adminRole").Value == "true") btnAdmin.Visibility = Visibility.Visible;
         }
         public async Task<Boolean> confirmPassword(PasswordBox pwdBox){
             string password = pwdBox.Password;
-            RequestMethods tempReq = new(req.username, password);
-            IEnumerable<XElement> data = await tempReq.System("ping");
+            Request tempReq = new(req.username, password);
+            IEnumerable<XElement> data = await tempReq.sendRequest("ping","");
             if(data.First().Attribute("status").Value == "ok"){
                 return true;
             } else return false;
@@ -48,7 +46,7 @@ namespace SSAANIP{
                     }
                     if (noOfAdmins > 0){
                         if (MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
-                            await req.sendDeleteUser("self");
+                            await req.sendDeleteUser("deleteUser");
                             using (SQLiteConnection conn = new(connectionString))
                             using (var cmd = conn.CreateCommand()){
                                 conn.Open();
