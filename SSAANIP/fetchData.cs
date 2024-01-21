@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Xml.Linq;
 using System.Linq;
-using System.Windows.Controls.Primitives;
-
 namespace SSAANIP{
     public class fetchData{
         readonly string connectionString;
@@ -105,7 +102,7 @@ namespace SSAANIP{
                 conn.Open();
                 cmd.CommandText = "DELETE FROM tblUsers";
                 cmd.ExecuteScalar();
-            } else {usersInfo = authenticatedUserInfo.Elements();}
+            } else usersInfo = authenticatedUserInfo.Elements();
             foreach(XElement user in usersInfo){
                 bool alrExists = false;
                 using (SQLiteConnection conn = new(connectionString))
