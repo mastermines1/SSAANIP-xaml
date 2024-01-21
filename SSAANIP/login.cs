@@ -6,7 +6,7 @@ using System.Linq;
 namespace SSAANIP{
     public partial class loginPage : Page{
         protected master parent;
-        protected RequestMethods req;
+        protected Request req;
         protected string version;
         public loginPage(master master){
             InitializeComponent();
@@ -17,7 +17,7 @@ namespace SSAANIP{
             string password = pwdBox.Password.ToString();
             req = new(username, password);
             try{
-                var response = await req.System("ping");           
+                var response = await req.sendRequest("ping","");           
                 if (response.First().Attribute("status").Value.ToString() == "ok"){ //valid username and password
                     parent.Frame.Content = new MainWindow(parent,req);
                 }

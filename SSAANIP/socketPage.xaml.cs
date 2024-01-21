@@ -8,15 +8,13 @@ namespace SSAANIP{
         public master parent;
         public SocketPage(master master){
             InitializeComponent();
-            this.parent = master;
+            parent = master;
         }
-
         private async void Button_Click(object sender, RoutedEventArgs e){
             string[] newConfig = new string[3];
-            Request request = new("test","test", "ping", socketBox.Text,"");
-
+            Request request = new("test","test", socketBox.Text);
             try{
-                var xmlDoc = await request.sendRequestAsync(); //test if valid socket
+                var xmlDoc = await request.sendRequest("ping",""); //test if valid socket
 
                 newConfig[0] = "socket=" + socketBox.Text;
                 newConfig[1] = "appName=" + namebox.Text;
@@ -24,11 +22,9 @@ namespace SSAANIP{
 
                 File.WriteAllLines("config.txt",newConfig);
                 parent.Frame.Content = new loginPage(parent);
-            }
-            catch{
+            } catch{
                 outputlbl.Content = "invalid socket";
             }
-
         }
     }
 }
