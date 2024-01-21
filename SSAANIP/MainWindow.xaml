@@ -9,10 +9,6 @@
     <Grid Width="865" Height="414">
         <Button Content="Refresh data" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="75" Click="btnUpdateDb_clicked"/>
 
-        <ListBox Name="lsArtist"  HorizontalAlignment="Left" Height="119" Margin="19,88,0,0" VerticalAlignment="Top" Width="125" SelectionChanged="lsArtist_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" />
-        <ListBox Name="lsAlbums" HorizontalAlignment="Left" Height="119" Margin="154,88,0,0" VerticalAlignment="Top" Width="125" SelectionChanged="lsAlbums_SelectionChanged"/>
-        <ListBox Name="lsSongs" HorizontalAlignment="Left" Height="119" Margin="288,88,0,0" VerticalAlignment="Top" Width="230" SelectionChanged="lsSongs_SelectionChanged" />
-
         <Button Content="Play selected album" Name="btnPlayAlbum" HorizontalAlignment="Left" Height="25" Margin="154,221,0,0" VerticalAlignment="Top" Width="125" Click="btnPlayAlbum_clicked" Visibility="Hidden"/>
         <Button Content="Queue selected album" Name="btnQueueAlbum" HorizontalAlignment="Left" Height="25" Margin="154,251,0,0" VerticalAlignment="Top" Width="125" Click="btnQueueAlbum_Click" Visibility="Hidden"/>
         <Button Content="Play selected song" Name="btnPlaySong" HorizontalAlignment="Left" Height="25" Margin="341,221,0,0" VerticalAlignment="Top" Width="124" Click="btnPlaySong_Click" Visibility="Hidden"/>
@@ -52,10 +48,22 @@
 
 
         <Button Name="btnUserManage" Content="Manage user" HorizontalAlignment="Left" Height="27" Margin="75,0,0,0" VerticalAlignment="Top" Width="82" Click="btnUserManage_Click"/>
-        <Label Content="Albums" HorizontalAlignment="Left" Height="27" Margin="154,55,0,0" VerticalAlignment="Top" Width="125" HorizontalContentAlignment="Center"/>
-        <Label Content="Artists" HorizontalAlignment="Left" Height="27" Margin="19,55,0,0" VerticalAlignment="Top" Width="125" HorizontalContentAlignment="Center"/>
-        <Label Content="Songs" HorizontalAlignment="Left" Height="27" Margin="288,55,0,0" VerticalAlignment="Top" Width="230" HorizontalContentAlignment="Center"/>
         <Button Name="btnClearQueue" Content="Clear Queue" Visibility="Hidden" HorizontalAlignment="Left" Height="25" Margin="636,276,0,0" VerticalAlignment="Top" Width="75" Click="btnClearQueue_Click"/>
+        <Grid Name="grdAlbums" Visibility="Hidden" HorizontalAlignment="Left" Height="179" Margin="19,55,0,0" VerticalAlignment="Top" Width="527">
+            <ListBox Name="lsArtist"  HorizontalAlignment="Left" Height="119" Margin="10,0,0,0" VerticalAlignment="Center" Width="125" SelectionChanged="lsArtist_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" />
+            <ListBox Name="lsAlbums" HorizontalAlignment="Left" Height="119" Margin="158,0,0,0" VerticalAlignment="Center" Width="125" SelectionChanged="lsAlbums_SelectionChanged"/>
+            <ListBox Name="lsSongs" HorizontalAlignment="Left" Height="119" Margin="297,0,0,0" VerticalAlignment="Center" Width="230" SelectionChanged="lsSongs_SelectionChanged" />
+            <Label Content="Artists" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="10,5,0,0" VerticalAlignment="Top" Width="125"/>
+            <Label Content="Albums" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="158,5,0,0" VerticalAlignment="Top" Width="125"/>
+            <Label Content="Songs" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="297,5,0,0" VerticalAlignment="Top" Width="230"/>
+        </Grid>
+        <Button Name="btnPlaylistsToggle" Content="Show playlists" HorizontalAlignment="Left" Height="27" Margin="157,0,0,0" VerticalAlignment="Top" Width="90" Click="btnPlaylistsToggle_Click"/>
+        <Grid Name="grdPlaylists" HorizontalAlignment="Left" Height="296" Margin="0,27,0,0" VerticalAlignment="Top" Width="674">
+            <Label Content="Playlists" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="31" Margin="22,10,0,0" VerticalAlignment="Top" Width="115"/>
+            <ListBox Name="lsPlaylists" HorizontalAlignment="Left" Height="141" Margin="22,41,0,0" VerticalAlignment="Top" Width="115" />
+
+
+        </Grid>
 
 
 

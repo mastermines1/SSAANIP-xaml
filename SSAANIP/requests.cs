@@ -8,78 +8,69 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using System.Runtime.InteropServices;
-using System.Security.Policy;
+using Microsoft.Windows.Themes;
 
 namespace SSAANIP{
-    public class RequestMethods { //different requests
+    public class RequestMethods{ //different requests
         readonly public string username;
         protected string password;
-        public RequestMethods(string username, string password) {
+        public RequestMethods(string username, string password){
             this.username = username;
             this.password = password;
         }
-        public async Task<IEnumerable<XElement>> System(string requestType) {
+        public async Task<IEnumerable<XElement>> System(string requestType){
             Request request = new(username, password, requestType);
             return await request.sendRequestAsync();
-
         }
-        public async Task<IEnumerable<XElement>> Browsing(string requestType, string id) {
-            if (id != null) {
+        public async Task<IEnumerable<XElement>> Browsing(string requestType, string id){
+            if (id != null){
                 id = $"&id={id}";
             }
             Request request = new(username, password, requestType, id);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendCreatePlaylist(string name, string[] songId) {
+        public async Task<IEnumerable<XElement>> sendCreatePlaylist(string name, string[] songId){
             string extras = $"&name={name}";
-            foreach (string sID in songId) {
+            foreach (string sID in songId){
                 extras += $"&songID={sID}";
             }
             Request request = new(username, password, "createPlaylist", extras);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex) {
+        public async Task<IEnumerable<XElement>> sendUpdatePlaylist(string playlistID, string name, string comment, string isPublic, string[] songID, string[] songIndex){
             string extras = string.Empty;
-            if (name != null) {
+            if (name != null){
                 extras += $"&name={name}";
             }
-            else if (comment != null) {
+            else if (comment != null){
                 extras += $"&comment={comment}";
             }
             Request request = new(username, password, "updatePlaylist", extras);
             return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendGetIndexes() {
+        public async Task<IEnumerable<XElement>> sendGetIndexes(){
             Request request = new(username, password, "getIndexes");
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
+            return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendGetAlbum(string id) {
+        public async Task<IEnumerable<XElement>> sendGetAlbum(string id){
             Request request = new(username, password, "getAlbum", "&id=" + id);
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
+            return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendGetArtist(string id) {
+        public async Task<IEnumerable<XElement>> sendGetArtist(string id){
             Request request = new(username, password, "getArtist", "&id=" + id);
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
+            return await request.sendRequestAsync();
         }
-        public async Task<IEnumerable<XElement>> sendStartScan() {
+        public async Task<IEnumerable<XElement>> sendStartScan(){
             Request request = new(username, password, "startScan");
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
+            return await request.sendRequestAsync();
         }
-        public string createUrl(string id) {
+        public string createUrl(string id){
             MD5 md5 = MD5.Create();
             string salt = createSalt(16);
             byte[] inputBytes = Encoding.ASCII.GetBytes(password + salt);
             byte[] hashed = md5.ComputeHash(inputBytes);
             string authToken = Convert.ToHexString(hashed).ToLower();
-
-
             return $@"http://{File.ReadAllLines("config.txt")[0].Split("=")[1]}/rest/stream?u={username}&t={authToken}&s={salt}&v={File.ReadAllLines("config.txt")[2].Split("=")[1]}&c={File.ReadAllLines("config.txt")[1].Split("=")[1]}&id={id}";
-
         }
         public static string createSalt(int size) { //generates a salt of set size 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
@@ -91,13 +82,11 @@ namespace SSAANIP{
             string extraParms = "&username=" + username;
             if (username == null) extraParms = "&username=" + this.username;
             Request request = new(this.username, password, "getUser", extraParms);
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
+            return await request.sendRequestAsync();
         }
         public async Task<IEnumerable<XElement>> sendGetUsers() {
             Request request = new(username, password, "getUsers");
-            IEnumerable<XElement> output = await request.sendRequestAsync();
-            return output;
+            return await request.sendRequestAsync();
         }
         public async void sendCreateUser(string username, string password, bool isAdmin) {
             HttpClient client = new();
@@ -136,7 +125,6 @@ namespace SSAANIP{
                 string update_user_url = $"http://{socket}/api/user/{await getIdJson(socket, token, newUsername)}";
                 client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
                 update_data update_data = new();
-
                 if (newIsAdmin == "true") update_data.isAdmin = true;
                 else if (newIsAdmin == "false") update_data.isAdmin = false;
                 if (newUsername != null) update_data.userName = username;
@@ -146,7 +134,6 @@ namespace SSAANIP{
                 await client.PutAsync(update_user_url, stringContent);
             }
         }
-
         public async Task<string> getTokenJson(string socket) {
             HttpClient client = new();
             string login_url = $"http://{socket}/auth/login";
@@ -197,7 +184,7 @@ namespace SSAANIP{
             public bool isAdmin { get; set; }
             public string name { get; set; }
         }
-         public class update_data {
+        public class update_data {
             public string userName { get; set; }
             public bool isAdmin { get; set; }
             public string password { get; set; }

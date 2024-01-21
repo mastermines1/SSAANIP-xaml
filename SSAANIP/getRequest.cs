@@ -3,15 +3,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Xml.Linq;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Security.Cryptography;
 using System;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-using System.Net.Http.Json;
-using Newtonsoft.Json.Linq;
-using System.Net.Http.Headers;
-
 namespace SSAANIP{
     public class Request{
         private readonly string socket;  //the socket that the subsonic server is located at
@@ -21,7 +14,6 @@ namespace SSAANIP{
         private readonly string clientName; //the name of the client in use
         private readonly string extraParms;
         private readonly string password;
-        
         public Request(string username, string password, string request){
             this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
             this.username = username;
@@ -56,9 +48,7 @@ namespace SSAANIP{
             byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(password + salt);
             byte[] hashed = md5.ComputeHash(inputBytes);
             string authToken = Convert.ToHexString(hashed).ToLower();
-
             string url = $@"http://{socket}/rest/{request}?u={username}&t={authToken}&s={salt}&v={version}&c={clientName}{extraParms}";
-
             using HttpResponseMessage responseMessage = await client.GetAsync(url);
             responseMessage.EnsureSuccessStatusCode();
             IEnumerable<XElement> collection = XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();

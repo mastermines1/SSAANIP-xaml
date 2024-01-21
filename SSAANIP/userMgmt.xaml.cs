@@ -6,21 +6,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
-
 namespace SSAANIP{
-    /// <summary>
-    /// Interaction logic for userMgmt.xaml
-    /// </summary>
     public partial class userMgmt : Page{
-        readonly master master;
-        readonly RequestMethods req;
-        readonly string connectionString = "Data source=data.db";
+        readonly protected master master;
+        readonly protected RequestMethods req;
+        readonly protected string connectionString = "Data source=data.db";
         public userMgmt(master master, RequestMethods req){
             InitializeComponent();
-
             adminPanel.Visibility = Visibility.Hidden;
             userPanel.Visibility = Visibility.Hidden;
-
             this.master = master;
             this.req = req;
             fetchUserInfo();
