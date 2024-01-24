@@ -74,8 +74,7 @@ namespace SSAANIP{
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
-                    cmd.CommandText = "INSERT INTO tblSongs VALUES (@id,@name,@duration,@index)";
-                    cmd.Parameters.Add(new("@index", index));
+                    cmd.CommandText = "INSERT INTO tblSongs VALUES (@id,@name,@duration)";
                     cmd.Parameters.Add(new("@id", track.FirstAttribute.Value));
                     cmd.Parameters.Add(new("@name", track.Attribute("title").Value));
                     cmd.Parameters.Add(new("@duration", track.Attribute("duration").Value));
@@ -84,9 +83,10 @@ namespace SSAANIP{
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
-                    cmd.CommandText = "INSERT INTO tblAlbumSongLink (albumId,songId) VALUES (@albumId,@songId)";
+                    cmd.CommandText = "INSERT INTO tblAlbumSongLink (albumId,songId,songIndex) VALUES (@albumId,@songId, @index)";
                     cmd.Parameters.Add(new("@albumId", albumID));
                     cmd.Parameters.Add(new("@songId", track.FirstAttribute.Value));
+                    cmd.Parameters.Add(new("@index", index));
                     cmd.ExecuteScalar();
                 }
                 index += 1;
@@ -95,15 +95,16 @@ namespace SSAANIP{
         private async void updatePlaylists(){
             IEnumerable<XElement> playlistsData = await req.sendRequest("getPlaylists", "");
             foreach (XElement playlist in playlistsData.Elements().Elements()){
+                IEnumerable<XElement> playlistData = await req.sendRequest("getPlaylist", "&id=" + playlist.Attribute("id").Value.ToString());
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
-                    cmd.CommandText = "INSERT INTO tblPlaylists VALUES (@id, @name, @duration, @isPublic, @descriptiom)";
+                    cmd.CommandText = "INSERT INTO tblPlaylists (playlistId, playlistName, playlistDuration, isPublic) VALUES (@id, @name, @duration, @isPublic)";
                     cmd.Parameters.Add(new("@id", playlist.Attribute("id").Value));
                     cmd.Parameters.Add(new("@name",playlist.Attribute("name").Value));
                     cmd.Parameters.Add(new("@duration",playlist.Attribute("duration").Value));
                     cmd.Parameters.Add(new("@isPublic", playlist.Attribute("public").Value));
-                    cmd.Parameters.Add(new("@description", playlist.Attribute("comment").Value));
+                    //cmd.Parameters.Add(new("@description", playlistData.Elements().First().Attribute("comment").Value));
                     cmd.ExecuteScalar();
                 }
                 using (SQLiteConnection conn = new(connectionString))
@@ -114,17 +115,19 @@ namespace SSAANIP{
                     cmd.Parameters.Add(new("@name", req.username));
                     cmd.ExecuteScalar();
                 }
-                IEnumerable<XElement> playlistData = await req.sendRequest("getPlaylist", "&id=" + playlist.Attribute("id").Value.ToString());
+                int index = 0;
                 foreach(XElement song in playlistData.Elements().Elements()){
                     if(song.Name == "entry"){
                         using (SQLiteConnection conn = new(connectionString))
                         using (var cmd = conn.CreateCommand()){
                             conn.Open();
-                            cmd.CommandText = "INSERT INTO tblPlaylistSongLink (playlistId, songId) VALUES (@playlistId, @songId)";
+                            cmd.CommandText = "INSERT INTO tblPlaylistSongLink (playlistId, songId, songIndex) VALUES (@playlistId, @songId, @songIndex)";
                             cmd.Parameters.Add(new("@playlistId", playlist.Attribute("id").Value));
                             cmd.Parameters.Add(new("songId", song.FirstAttribute.Value));
+                            cmd.Parameters.Add(new("songIndex", index));
                             cmd.ExecuteScalar();
                         }
+                        index ++;
                     }
                 }
             }
