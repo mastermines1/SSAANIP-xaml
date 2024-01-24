@@ -16,11 +16,11 @@ namespace SSAANIP{
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
-                cmd.CommandText = "DELETE FROM tblAlbumArtistLink;DELETE FROM tblAlbumSongLink;DELETE FROM tblPlaylistUserLink;DELETE FROM tblPlaylistSongLink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;DELETE FROM tblPlaylists";
+                cmd.CommandText = "DELETE FROM tblAlbumArtistLink;DELETE FROM tblAlbumSongLink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;UPDATE sqlite_sequence SET seq=0 WHERE (name=\"tblAlbumArtistLink\" OR name=\"tblAlbumSongLink\")";
                 cmd.ExecuteScalar();
             }
             updateArtists();
-            updatePlaylists();
+            //updatePlaylists();
         }
         private async void updateArtists(){
             List<string> artistsID = new();
@@ -99,20 +99,11 @@ namespace SSAANIP{
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
-                    cmd.CommandText = "INSERT INTO tblPlaylists (playlistId, playlistName, playlistDuration, isPublic) VALUES (@id, @name, @duration, @isPublic)";
+                    cmd.CommandText = "UPDATE tblPlaylists SET(playlistId=@id, playlistName=@name, playlistDuration=@duration, isPublic=@isPublic) WHERE playlistId=@id";
                     cmd.Parameters.Add(new("@id", playlist.Attribute("id").Value));
                     cmd.Parameters.Add(new("@name",playlist.Attribute("name").Value));
                     cmd.Parameters.Add(new("@duration",playlist.Attribute("duration").Value));
                     cmd.Parameters.Add(new("@isPublic", playlist.Attribute("public").Value));
-                    //cmd.Parameters.Add(new("@description", playlistData.Elements().First().Attribute("comment").Value));
-                    cmd.ExecuteScalar();
-                }
-                using (SQLiteConnection conn = new(connectionString))
-                using (var cmd = conn.CreateCommand()){
-                    conn.Open();
-                    cmd.CommandText = "INSERT INTO tblPlaylistUserLink (playlistId, userName) VALUES (@id, @name)";
-                    cmd.Parameters.Add(new("@id", playlist.Attribute("id").Value));
-                    cmd.Parameters.Add(new("@name", req.username));
                     cmd.ExecuteScalar();
                 }
                 int index = 0;
@@ -151,10 +142,10 @@ namespace SSAANIP{
                     conn.Open();
                     cmd.CommandText = "SELECT userName FROM tblUsers WHERE userName = @username";
                     cmd.Parameters.Add(new("@username", user.Attribute("username").Value.ToString().ToLower()));
-                    try{
-                        cmd.ExecuteScalar();
+                    using SQLiteDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read()){
                         alrExists = true;
-                    }catch{}
+                    }  
                 }
                 if (!alrExists){
                     using (SQLiteConnection conn = new(connectionString))

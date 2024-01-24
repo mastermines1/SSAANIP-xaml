@@ -59,18 +59,18 @@
             <Label Content="Playlists" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="27" Margin="29,34,0,0" VerticalAlignment="Top" Width="125"/>
             <ListBox Name="lsPlaylists" Height="119" Margin="29,58,520,0" VerticalAlignment="Top" Width="125" SelectionChanged="lsPlaylists_SelectionChanged" />
             <Label Content="Songs" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="27" Margin="178,34,0,0" VerticalAlignment="Top" Width="199"/>
-            <ListBox Name="lsPlaylistsSongs" HorizontalAlignment="Left" Height="119" Margin="177,58,0,0" VerticalAlignment="Top" Width="200" />
+            <ListBox Name="lsPlaylistsSongs" HorizontalAlignment="Left" Height="119" Margin="177,58,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="lsPlaylistsSongs_SelectionChanged" />
             <Button Name="btnNewPlaylist" Content="New Playlist" HorizontalAlignment="Left" Height="21" Margin="404,10,0,0" VerticalAlignment="Top" Width="76" Click="btnNewPlaylist_Click"/>
-            <Grid Name="grdPlaylistEdit" HorizontalAlignment="Left" Height="244" Margin="404,42,0,0" VerticalAlignment="Top" Width="270">
+            <Grid Name="grdPlaylistEdit" HorizontalAlignment="Left" Height="254" Margin="404,42,0,0" VerticalAlignment="Top" Width="270">
                 <Label Content="Name" HorizontalAlignment="Left" Height="24" Margin="10,1,0,0" VerticalAlignment="Top" Width="72"/>
                 <TextBox Name="txtPlaylistName" HorizontalAlignment="Left" Height="24" Margin="87,1,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173"/>
-                <CheckBox Name="ckbIsPublic" Content="Public" HorizontalAlignment="Left" Height="18" Margin="10,80,0,0" VerticalAlignment="Top" Width="59"/>
+                <CheckBox Name="ckbIsPublic" Content="Public" HorizontalAlignment="Left" Height="18" Margin="10,77,0,0" VerticalAlignment="Top" Width="59"/>
                 <Label Content="Description" HorizontalAlignment="Left" Height="27" Margin="10,30,0,0" VerticalAlignment="Top" Width="72"/>
                 <TextBox Name="txtPlaylistDescription" HorizontalAlignment="Left" Height="45" Margin="87,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
-                <Button Name="btnSavePlaylist" Content="Save" HorizontalAlignment="Left" Height="27" Margin="188,207,0,0" VerticalAlignment="Top" Width="61" Click="btnSavePlaylist_Click"/>
-                <ListBox Name="lsPlaylistEditSongs" HorizontalAlignment="Left" Height="104" Margin="97,98,0,0" VerticalAlignment="Top" Width="153" />
-                <Button Name="btnPlaylistUp" Content="^" Visibility="Visible" HorizontalAlignment="Left" Margin="72,112,0,0" Width="20" Height="20" VerticalAlignment="Top" Click="btnPlaylistUp_Click" />
-                <Button Name="btnPlaylistDown" Content="^" Visibility="Visible" HorizontalAlignment="Left" Height="20" Margin="72,162,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="0.5,0.5" Click="btnPlaylistDown_Click" >
+                <Button Name="btnSavePlaylist" Content="Save" HorizontalAlignment="Left" Height="26" Margin="199,218,0,0" VerticalAlignment="Top" Width="61" Click="btnSavePlaylist_Click"/>
+                <ListBox Name="lsPlaylistEditSongs" HorizontalAlignment="Left" Height="104" Margin="108,81,0,0" VerticalAlignment="Top" Width="153" />
+                <Button Name="btnPlaylistUp" Content="^" Visibility="Visible" HorizontalAlignment="Left" Margin="83,95,0,0" Width="20" Height="20" VerticalAlignment="Top" Click="btnPlaylistUp_Click" />
+                <Button Name="btnPlaylistDown" Content="^" Visibility="Visible" HorizontalAlignment="Left" Height="20" Margin="83,145,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="0.5,0.5" Click="btnPlaylistDown_Click" >
                     <Button.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -80,13 +80,16 @@
                         </TransformGroup>
                     </Button.RenderTransform>
                 </Button>
-                <Button Name="btnPlaylistDelete" Content="🗑️" Visibility="Visible" HorizontalAlignment="Left" Height="20" Margin="72,137,0,0" VerticalAlignment="Top" Width="20" Click="btnPlaylistDelete_Click"  />
+                <Button Name="btnPlaylistDelete" Content="🗑️" Visibility="Visible" HorizontalAlignment="Left" Height="20" Margin="83,121,0,0" VerticalAlignment="Top" Width="20" Click="btnPlaylistDelete_Click"  />
+                <TextBox Name="txtSongToAdd" HorizontalAlignment="Left" Height="20" Margin="10,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="150"/>
+                <Label Content="Add song" HorizontalAlignment="Left" Height="30" Margin="10,173,0,0" VerticalAlignment="Top" Width="64"/>
+                <Button Name="btnAddSong" Content="Add" HorizontalAlignment="Left" Height="18" Margin="10,226,0,0" VerticalAlignment="Top" Width="32" Click="btnAddSong_Click"/>
 
             </Grid>
-            <Button Name="btnPlayPlaylist" Content="Play playlist" HorizontalAlignment="Left" Height="25" Margin="29,182,0,0" VerticalAlignment="Top" Width="125"/>
-            <Button Name="btnQueuePlaylist" Content="Queue playlist" HorizontalAlignment="Left" Height="25" Margin="29,212,0,0" VerticalAlignment="Top" Width="125"/>
-            <Button Name="btnPlayPlaylistSong" Content="Play song" HorizontalAlignment="Left" Height="25" Margin="215,182,0,0" VerticalAlignment="Top" Width="125"/>
-            <Button Name="btnQueuePlaylistSong" Content="Queue song" HorizontalAlignment="Left" Height="25" Margin="215,212,0,0" VerticalAlignment="Top" Width="125"/>
+            <Button Name="btnPlayPlaylist" Content="Play playlist" HorizontalAlignment="Left" Height="25" Margin="29,182,0,0" VerticalAlignment="Top" Width="125" Click="btnPlayPlaylist_Click"/>
+            <Button Name="btnQueuePlaylist" Content="Queue playlist" HorizontalAlignment="Left" Height="25" Margin="29,212,0,0" VerticalAlignment="Top" Width="125" Click="btnQueuePlaylist_Click"/>
+            <Button Name="btnPlayPlaylistSong" Content="Play song" HorizontalAlignment="Left" Height="25" Margin="215,182,0,0" VerticalAlignment="Top" Width="125" Click="btnPlayPlaylistSong_Click"/>
+            <Button Name="btnQueuePlaylistSong" Content="Queue song" HorizontalAlignment="Left" Height="25" Margin="215,212,0,0" VerticalAlignment="Top" Width="125" Click="btnQueuePlaylistSong_Click"/>
             <Button Name="btnEditPlaylist" Content="Edit playlist" HorizontalAlignment="Left" Height="25" Margin="29,242,0,0" VerticalAlignment="Top" Width="125" Click="btnEditPlaylist_Click"/>
 
 
