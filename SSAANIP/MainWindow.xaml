@@ -22,7 +22,7 @@
         <Slider Name="sdrPosition" HorizontalAlignment="Left" Visibility="Visible" Height="24" TickFrequency="1" TickPlacement="None" IsSnapToTickEnabled="True" Margin="173,360,0,0" VerticalAlignment="Top" Width="603"  Maximum="100" ValueChanged="sdrPosition_ValueChanged"/>
         <Label x:Name="lblTime" Margin="696,321,89,63" Content=""/>
         <!--Queue managment-->
-        <ListBox Name="lsQueue" BorderThickness="0" HorizontalAlignment="Left" Height="316" Margin="714,0,0,0" VerticalAlignment="Top" Width="151" SelectionChanged="lsQueue_SelectionChanged" />
+        <ListBox Name="lsQueue" BorderThickness="0" HorizontalAlignment="Left" Height="316" Margin="704,0,0,0" VerticalAlignment="Top" Width="151" SelectionChanged="lsQueue_SelectionChanged" />
         <Button Name="btnQueueUp" Content="^" Visibility="Hidden" HorizontalAlignment="Left" Height="20" Margin="693,38,0,0" VerticalAlignment="Top" Width="20" Click="btnQueueUp_Click"/>
         <Button Name="btnQueueDown" Content="^" Visibility="Hidden" HorizontalAlignment="Left" Height="20" Margin="693,80,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="0.5,0.5" Click="btnQueueDown_Click">
             <Button.RenderTransform>
@@ -40,22 +40,25 @@
         <Button Name="btnClearQueue" Content="Clear Queue" Visibility="Hidden" HorizontalAlignment="Left" Height="25" Margin="636,276,0,0" VerticalAlignment="Top" Width="75" Click="btnClearQueue_Click"/>
 
         <!--Album view-->
-        <Grid Name="grdAlbums" Visibility="Hidden" HorizontalAlignment="Left" Height="265" Margin="19,55,0,0" VerticalAlignment="Top" Width="527">
-            <ListBox Name="lsArtist"  HorizontalAlignment="Left" Height="119" Margin="10,37,0,0" VerticalAlignment="Top" Width="125" SelectionChanged="lsArtist_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" />
-            <ListBox Name="lsAlbums" HorizontalAlignment="Left" Height="119" Margin="158,37,0,0" VerticalAlignment="Top" Width="125" SelectionChanged="lsAlbums_SelectionChanged"/>
-            <ListBox Name="lsSongs" HorizontalAlignment="Left" Height="119" Margin="297,37,0,0" VerticalAlignment="Top" Width="230" SelectionChanged="lsSongs_SelectionChanged" />
-            <Label Content="Artists" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="10,5,0,0" VerticalAlignment="Top" Width="125"/>
-            <Label Content="Albums" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="158,5,0,0" VerticalAlignment="Top" Width="125"/>
-            <Label Content="Songs" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="297,5,0,0" VerticalAlignment="Top" Width="230"/>
-            <Button Content="Play selected album" Name="btnPlayAlbum" HorizontalAlignment="Left" Height="25" Margin="159,165,0,0" VerticalAlignment="Top" Width="125" Click="btnPlayAlbum_clicked" Visibility="Hidden"/>
-            <Button Content="Queue selected album" Name="btnQueueAlbum" HorizontalAlignment="Left" Height="25" Margin="159,196,0,0" VerticalAlignment="Top" Width="125" Click="btnQueueAlbum_Click" Visibility="Hidden"/>
-            <Button Content="Play selected song" Name="btnPlaySong" HorizontalAlignment="Left" Height="25" Margin="350,168,0,0" VerticalAlignment="Top" Width="124" Click="btnPlaySong_Click" Visibility="Hidden"/>
-            <Button Content="Queue selected song" Name="btnQueueSong" HorizontalAlignment="Left" Height="25" Margin="350,198,0,0" VerticalAlignment="Top" Width="124" Click="btnQueueSong_Click" Visibility="Hidden"/>
+        <Grid Name="grdAlbums" Visibility="Visible" HorizontalAlignment="Left" Height="265" Margin="19,55,0,0" VerticalAlignment="Top" Width="669">
+            <ListBox Name="lsArtist"  HorizontalAlignment="Left" Height="119" Margin="10,37,0,0" VerticalAlignment="Top" Width="150" SelectionChanged="lsArtist_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" />
+            <ListBox Name="lsAlbums" HorizontalAlignment="Left" Height="119" Margin="185,37,0,0" VerticalAlignment="Top" Width="150" SelectionChanged="lsAlbums_SelectionChanged"/>
+            <ListBox Name="lsSongs" HorizontalAlignment="Left" Height="119" Margin="360,37,0,0" VerticalAlignment="Top" Width="238" SelectionChanged="lsSongs_SelectionChanged" />
+            <Label Content="Artists" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="10,5,0,0" VerticalAlignment="Top" Width="150"/>
+            <Label Content="Albums" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="185,5,0,0" VerticalAlignment="Top" Width="150"/>
+            <Label Content="Songs" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="360,5,0,0" VerticalAlignment="Top" Width="238"/>
+            <Button Content="Play selected album" Name="btnPlayAlbum" HorizontalAlignment="Left" Height="25" Margin="197,165,0,0" VerticalAlignment="Top" Width="126" Click="btnPlayAlbum_clicked" Visibility="Hidden"/>
+            <Button Content="Queue selected album" Name="btnQueueAlbum" HorizontalAlignment="Left" Height="25" Margin="197,196,0,0" VerticalAlignment="Top" Width="126" Click="btnQueueAlbum_Click" Visibility="Hidden"/>
+            <Button Content="Play selected song" Name="btnPlaySong" HorizontalAlignment="Left" Height="25" Margin="417,166,0,0" VerticalAlignment="Top" Width="124" Click="btnPlaySong_Click" Visibility="Hidden" />
+            <Button Content="Queue selected song" Name="btnQueueSong" HorizontalAlignment="Left" Height="25" Margin="417,196,0,0" VerticalAlignment="Top" Width="124" Click="btnQueueSong_Click" Visibility="Hidden" />
+            <Button Content="Add album to playlist" Name="btnAddAlbumToPlaylist" HorizontalAlignment="Left" Height="25" Margin="197,226,0,0" VerticalAlignment="Top" Width="124" Click="btnAddAlbumToPlaylist_Click" Visibility="Hidden"/>
+            <Button Content="Add song to playlist" Name="btnAddSongToPlaylist" HorizontalAlignment="Left" Height="25" Margin="417,226,0,0" VerticalAlignment="Top" Width="124" Click="btnAddSongToPlaylist_Click" Visibility="Hidden"/>
+
         </Grid>
         <Button Name="btnPlaylistsToggle" Content="Show playlists" HorizontalAlignment="Left" Height="27" Margin="157,0,0,0" VerticalAlignment="Top" Width="90" Click="btnPlaylistsToggle_Click"/>
 
         <!--Playlist View-->
-        <Grid Name="grdPlaylists" Visibility="Visible" HorizontalAlignment="Left" Height="296" Margin="0,27,0,0" VerticalAlignment="Top" Width="674">
+        <Grid Name="grdPlaylists" Visibility="Hidden" HorizontalAlignment="Left" Height="296" Margin="0,27,0,0" VerticalAlignment="Top" Width="674">
             <Label Content="Playlists" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="27" Margin="29,34,0,0" VerticalAlignment="Top" Width="125"/>
             <ListBox Name="lsPlaylists" Height="119" Margin="29,58,520,0" VerticalAlignment="Top" Width="125" SelectionChanged="lsPlaylists_SelectionChanged" />
             <Label Content="Songs" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="27" Margin="178,34,0,0" VerticalAlignment="Top" Width="199"/>
@@ -91,8 +94,7 @@
             <Button Name="btnPlayPlaylistSong" Content="Play song" HorizontalAlignment="Left" Height="25" Margin="215,182,0,0" VerticalAlignment="Top" Width="125" Click="btnPlayPlaylistSong_Click"/>
             <Button Name="btnQueuePlaylistSong" Content="Queue song" HorizontalAlignment="Left" Height="25" Margin="215,212,0,0" VerticalAlignment="Top" Width="125" Click="btnQueuePlaylistSong_Click"/>
             <Button Name="btnEditPlaylist" Content="Edit playlist" HorizontalAlignment="Left" Height="25" Margin="29,242,0,0" VerticalAlignment="Top" Width="125" Click="btnEditPlaylist_Click"/>
-
-
         </Grid>
+        <ComboBox Name="cobPlaylists" HorizontalAlignment="Left" Text="Playlist to add to" Height="27" Margin="247,0,0,0" VerticalAlignment="Top" Width="134" SelectionChanged="cobPlaylists_SelectionChanged" />
     </Grid>
 </Page>
