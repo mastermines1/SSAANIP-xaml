@@ -28,9 +28,9 @@ namespace SSAANIP{
             this.clientName = "SocketTest";
             this.password = password;
         }
-        public async Task<IEnumerable<XElement>> sendRequest(string request, string extraParms){
+        public async Task<IEnumerable<XElement>> sendRequest(string request, string extraParams){
             HttpClient client = new();
-            using HttpResponseMessage responseMessage = await client.GetAsync(createURL(request,extraParms));
+            using HttpResponseMessage responseMessage = await client.GetAsync(createURL(request,extraParams));
             responseMessage.EnsureSuccessStatusCode();
             IEnumerable<XElement> collection = XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
             return collection;
@@ -41,13 +41,13 @@ namespace SSAANIP{
             rng.GetBytes(salt);
             return Convert.ToHexString(salt);
         }
-        public string createURL(string request, string extraParms){
+        public string createURL(string request, string extraParams){
             MD5 md5 = MD5.Create();
             string salt = createSalt(16);
             byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(password + salt);
             byte[] hashed = md5.ComputeHash(inputBytes);
             string authToken = Convert.ToHexString(hashed).ToLower();
-            return $@"http://{socket}/rest/{request}?u={username}&t={authToken}&s={salt}&v={version}&c={clientName}{extraParms}";
+            return $@"http://{socket}/rest/{request}?u={username}&t={authToken}&s={salt}&v={version}&c={clientName}{extraParams}";
         }
         public async void sendCreateUser(string username, string password, bool isAdmin){
             HttpClient client = new();
@@ -56,7 +56,7 @@ namespace SSAANIP{
             if (token != null){
                 string create_user_url = $"http://{socket}/api/user";
                 client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
-                create_data create_data = new(){
+                json_data create_data = new(){
                     userName = username,
                     name = username,
                     isAdmin = isAdmin,
@@ -85,7 +85,7 @@ namespace SSAANIP{
             if (token != null){
                 string update_user_url = $"http://{socket}/api/user/{await getIdJson(socket, token, newUsername)}";
                 client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
-                update_data update_data = new();
+                json_data update_data = new();
                 if (newIsAdmin == "true") update_data.isAdmin = true;
                 else if (newIsAdmin == "false") update_data.isAdmin = false;
                 if (newUsername != null) update_data.userName = username;
@@ -123,8 +123,7 @@ namespace SSAANIP{
                         return response_object["id"].ToString();
                     }
                 }
-            }
-            else{
+            }else{
                 string fetch_url = $"http://{socket}/auth/login";
                 Dictionary<string, string> userInfo = new(){
                     {"username",this.username},{"password",this.password}
@@ -138,16 +137,12 @@ namespace SSAANIP{
             }
             return "error";
         }
-        private class create_data{
+        private class json_data{
             public string userName { get; set; }
             public string password { get; set; }
             public bool isAdmin { get; set; }
             public string name { get; set; }
         }
-        private class update_data{
-            public string userName { get; set; }
-            public bool isAdmin { get; set; }
-            public string password { get; set; }
-        }
+
     }
 }

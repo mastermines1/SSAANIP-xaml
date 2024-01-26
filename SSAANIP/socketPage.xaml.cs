@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using System.IO;
 using System.Linq;
-
 namespace SSAANIP{
     public partial class SocketPage : Page{
         public master parent;

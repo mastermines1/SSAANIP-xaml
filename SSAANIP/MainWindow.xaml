@@ -56,7 +56,7 @@
 
         </Grid>
         <Button Name="btnPlaylistsToggle" Content="Show playlists" HorizontalAlignment="Left" Height="27" Margin="157,0,0,0" VerticalAlignment="Top" Width="90" Click="btnPlaylistsToggle_Click"/>
-
+        <ComboBox Name="cobPlaylists" HorizontalAlignment="Left" Text="Playlist to add to" Height="27" Margin="247,0,0,0" VerticalAlignment="Top" Width="134" SelectionChanged="cobPlaylists_SelectionChanged" />
         <!--Playlist View-->
         <Grid Name="grdPlaylists" Visibility="Hidden" HorizontalAlignment="Left" Height="296" Margin="0,27,0,0" VerticalAlignment="Top" Width="674">
             <Label Content="Playlists" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="27" Margin="29,34,0,0" VerticalAlignment="Top" Width="125"/>
@@ -95,6 +95,5 @@
             <Button Name="btnQueuePlaylistSong" Content="Queue song" HorizontalAlignment="Left" Height="25" Margin="215,212,0,0" VerticalAlignment="Top" Width="125" Click="btnQueuePlaylistSong_Click"/>
             <Button Name="btnEditPlaylist" Content="Edit playlist" HorizontalAlignment="Left" Height="25" Margin="29,242,0,0" VerticalAlignment="Top" Width="125" Click="btnEditPlaylist_Click"/>
         </Grid>
-        <ComboBox Name="cobPlaylists" HorizontalAlignment="Left" Text="Playlist to add to" Height="27" Margin="247,0,0,0" VerticalAlignment="Top" Width="134" SelectionChanged="cobPlaylists_SelectionChanged" />
     </Grid>
 </Page>

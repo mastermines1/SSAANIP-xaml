@@ -20,7 +20,6 @@ namespace SSAANIP{
                 cmd.ExecuteScalar();
             }
             updateArtists();
-            //updatePlaylists();
         }
         private async void updateArtists(){
             List<string> artistsID = new();
@@ -29,8 +28,8 @@ namespace SSAANIP{
                 artistsID.Add(element.FirstAttribute.Value);
             }
             foreach (string id in artistsID){ //gets the artist name
-                IEnumerable<XElement> responce = await req.sendRequest("getArtist","&id=" + id);
-                string artistName = responce.Elements().ElementAt(0).FirstAttribute.NextAttribute.Value;
+                IEnumerable<XElement> response = await req.sendRequest("getArtist","&id=" + id);
+                string artistName = response.Elements().ElementAt(0).FirstAttribute.NextAttribute.Value;
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
@@ -53,7 +52,6 @@ namespace SSAANIP{
                     cmd.Parameters.Add(new("@id", currentAlbumId));
                     cmd.Parameters.Add(new("@name", album.Attribute("name").Value));
                     cmd.Parameters.Add(new("@duration", album.Attribute("duration").Value));
-
                     cmd.ExecuteScalar();
                 }
                 using (SQLiteConnection conn = new(connectionString))

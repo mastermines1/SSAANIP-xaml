@@ -33,24 +33,11 @@ namespace SSAANIP {
         protected string prioNextUp = null;
         public MainWindow(master master,Request req) {
             InitializeComponent();
-
-            //temp
-            grdPlaylists.Visibility = Visibility.Hidden;
-            grdAlbums.Visibility = Visibility.Visible;
-            grdPlaylistEdit.Visibility = Visibility.Hidden;
-            btnPlayPlaylist.Visibility = Visibility.Hidden;
-            btnQueuePlaylist.Visibility = Visibility.Hidden;
-            btnEditPlaylist.Visibility = Visibility.Hidden;
-            btnQueuePlaylistSong.Visibility = Visibility.Hidden;
-            btnPlayPlaylistSong.Visibility = Visibility.Hidden;
-            //temp
-
             parent = master;
             this.req = req;
             update = new(connectionString, req);
             update.updateUsers();
             cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
-
             if (!File.Exists("data.db")) { //checks if file exists
                 File.Create("data.db");
                 using (SQLiteConnection conn = new(connectionString))
@@ -74,7 +61,7 @@ namespace SSAANIP {
                 prioNextUp = null;
                 lblSongPlaying.Content = await getSongName(prioNextUp) + " | " + await getArtistNameFromSong(prioNextUp);
             }
-            if(queue.Count > 0){
+            else if(queue.Count > 0){
                 fromQueue = true;
                 currentSongId = queue.Dequeue();
                 mediaElement.Source = new Uri(req.createURL("stream", "&id=" + currentSongId));
@@ -235,7 +222,6 @@ namespace SSAANIP {
                 (Array[ranNum], Array[i]) = (Array[i], Array[ranNum]);
             }
             Queue.Clear();
-
             for (int i = 0; i < Array.Length; i++){
                 Queue.Enqueue(Array[i]);
             }
@@ -341,7 +327,6 @@ namespace SSAANIP {
                     cmd.CommandText = "SELECT albumName FROM tblAlbums WHERE albumId = @id ORDER by albumName DESC";
                     cmd.Parameters.Add(new("@id", albumId));
                     albumNames.Add(cmd.ExecuteScalar().ToString());
-                
                 }
                 lsAlbums.ItemsSource = albumNames;
             }
@@ -350,7 +335,7 @@ namespace SSAANIP {
             btnPlaySong.Visibility = Visibility.Hidden;
             btnQueueSong.Visibility = Visibility.Hidden;
             btnAddSongToPlaylist.Visibility = Visibility.Hidden;
-            if ((sender as ListBox).SelectedItem != null){
+            if (lsAlbums.SelectedItem != null){
                 if (cobPlaylists.SelectedItem != null) btnAddAlbumToPlaylist.Visibility = Visibility.Visible;
                 string selectedAlbumName = (sender as ListBox).SelectedItem.ToString();
                 List<string> albumIds = new();
@@ -422,8 +407,8 @@ namespace SSAANIP {
                     int length = songIndex.Count;
                     songIndex.Clear();
                     songIndex.Enqueue(currentSongIndex);
-                    for(int i =0; i < length; i++) {
-                         songIndex.Enqueue(tempSongIndex[i]);
+                    for(int i =0; i < length; i++){
+                            songIndex.Enqueue(tempSongIndex[i]);
                     }
                 }
                 prioNextUp = prevPlayed.Pop();
@@ -432,7 +417,7 @@ namespace SSAANIP {
         }
         private void btnPlayPause_Click(object sender, RoutedEventArgs e){
             if(mediaElement.Source != null || queue.Count > 0){
-                if (isPaused) { 
+                if (isPaused){ 
                     mediaElement.Play();
                     btnPlayPause.Content = "||";
                     isPaused = false;
@@ -579,7 +564,6 @@ namespace SSAANIP {
                 btnPlayPlaylist.Visibility = Visibility.Visible;
                 btnQueuePlaylist.Visibility = Visibility.Visible;
                 btnEditPlaylist.Visibility = Visibility.Visible;
-
                 string playlistId = string.Empty;
                 List<string> songIds = new();
                 using (SQLiteConnection conn = new(connectionString))
@@ -620,7 +604,6 @@ namespace SSAANIP {
             string playlistIsPublic = ckbIsPublic.IsChecked.Value.ToString();
             string playlistId = string.Empty;
             bool alrExists = false;
-
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
@@ -633,11 +616,10 @@ namespace SSAANIP {
                 }
             }
             if (!alrExists){
-               playlistId = (await req.sendRequest("createPlaylist", "&name=" + playlistName)).Elements().First().Attribute("id").Value;
+                playlistId = (await req.sendRequest("createPlaylist", "&name=" + playlistName)).Elements().First().Attribute("id").Value;
             }
             await req.sendRequest("updatePlaylist", $"&playlistId={playlistId}&name={playlistName}&comment={playlistDescription}&public={playlistIsPublic}");
             IEnumerable<XElement> playlistData = await req.sendRequest("getPlaylist", "&id=" + playlistId);
-
             if (!alrExists){
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
@@ -681,7 +663,6 @@ namespace SSAANIP {
                 using SQLiteDataReader reader = cmd.ExecuteReader() ;
                 while (reader.Read()) noOfSongs++;
             }
-
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
@@ -689,11 +670,9 @@ namespace SSAANIP {
                 cmd.Parameters.Add(new("@id", playlistId));
                 cmd.ExecuteScalar();
             }
-            //request to remove all songs from playlist
             for(int i=0; i< noOfSongs; i++){
                 req.sendRequest("updatePlaylist", $"&playlistId={playlistId}&songIndexToRemove={i}");
-            }
-            
+            }    
             int index = 0;
             string songId = string.Empty;
             foreach (string songName in lsPlaylistEditSongs.Items){
@@ -713,7 +692,6 @@ namespace SSAANIP {
                     cmd.Parameters.Add(new("@index", index));
                     cmd.ExecuteScalar();
                 }
-                //send request to add in the new song
                 await req.sendRequest("updatePlaylist",$"&playlistId={playlistId}&songIdToAdd={songId}");
                 index++;
             }
@@ -782,7 +760,7 @@ namespace SSAANIP {
                 cmd.Parameters.Add(new("@name", songName));
                 using SQLiteDataReader reader = cmd.ExecuteReader();
                 while (reader.Read()){
-                   songId = reader.GetString(0);
+                    songId = reader.GetString(0);
                 }
             }
             if (songId != string.Empty){
