@@ -28,7 +28,8 @@ namespace SSAANIP{
             IEnumerable<XElement> data = await tempReq.sendRequest("ping","");
             if(data.First().Attribute("status").Value == "ok"){
                 return true;
-            } else return false;
+            }
+            return false;
         }
         private void btnLogout_Click(object sender, RoutedEventArgs e){
             master.Frame.Content = new loginPage(master);
@@ -42,7 +43,10 @@ namespace SSAANIP{
                     using (SQLiteCommand cmd = conn.CreateCommand()){
                         conn.Open();
                         cmd.CommandText = "SELECT FROM tblUsers WHERE isAdmin = \"true\"";
-                        noOfAdmins = cmd.ExecuteNonQuery();
+                        using SQLiteDataReader reader = cmd.ExecuteReader();
+                        while(reader.Read()){
+                            noOfAdmins ++;
+                        }
                     }
                     if (noOfAdmins > 0){
                         if (MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
@@ -54,23 +58,18 @@ namespace SSAANIP{
                                 cmd.Parameters.Add(new("@username", req.username));
                                 cmd.ExecuteScalar();
                             }
-
                             master.Frame.Content = new loginPage(master);
                         }
-                    } else{
+                    }else{
                         MessageBox.Show("You cannot delete the only admin user.", "Error");
                     }
-
-                }
-                else{ //incorrect password
+                }else{ //incorrect password
                     lblConfirm.Text = "Incorrect password";
                 }
-            }
-            else{
+            }else{
                 btnDeleteSelf.Content = "Continue";
                 lblConfirm.Text = "Please confirm your password";
             }
-
         }
         private async void btnAdmin_Click(object sender, RoutedEventArgs e){
             if(adminPanel.Visibility == Visibility.Visible){
@@ -120,8 +119,7 @@ namespace SSAANIP{
                 }
                 lsUserNames.Items.Add(username);
                 lblOutput.Content = $"User {username} Created";
-            }
-            else{
+            }else{
                 lblOutput.Content = "Passwords do not match";
             }
         }
@@ -159,7 +157,6 @@ namespace SSAANIP{
             if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
                 if (ckbChangePassword.IsChecked.Value) await req.sendUpdateUser(txtDisplayUserName.Text.ToLower(), txtPasswordEdit.Text, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
                 else await req.sendUpdateUser(txtDisplayUserName.Text.ToLower(), null, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
-
                 await req.sendUpdateUser(txtDisplayUserName.Text.ToLower(),txtPasswordEdit.Text, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
@@ -174,7 +171,6 @@ namespace SSAANIP{
                 lsUserNames.Items.Remove(lsUserNames.SelectedItem);
                 lsUserNames.Items.Add(txtDisplayUserName.Text);
             }
-
         }
         private async void btnChangePassword_Click(object sender, RoutedEventArgs e){
             if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){

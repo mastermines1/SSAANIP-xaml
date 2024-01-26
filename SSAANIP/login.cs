@@ -20,13 +20,11 @@ namespace SSAANIP{
                 var response = await req.sendRequest("ping","");           
                 if (response.First().Attribute("status").Value.ToString() == "ok"){ //valid username and password
                     parent.Frame.Content = new MainWindow(parent,req);
-                }
-                else{
+                }else{
                     output.Content = "Invalid username or password";
                     pwdBox.Clear();
                 }
-            }
-            catch{
+            }catch{
                 output.Content = "Cant access server";
             }            
         }
