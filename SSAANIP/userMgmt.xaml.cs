@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
@@ -36,7 +36,7 @@ namespace SSAANIP{
         }
         private async void btnDeleteSelf_Click(object sender, RoutedEventArgs e){
             confirmPass.Visibility = Visibility.Visible;
-            if (confirmPass.Password != ""){
+            if (!string.IsNullOrEmpty(confirmPass.Password)){
                 if (await confirmPassword(confirmPass)){
                     int noOfAdmins = 0;
                     using (SQLiteConnection conn = new(connectionString))
