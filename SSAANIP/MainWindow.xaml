@@ -22,7 +22,7 @@
         <Slider Name="sdrPosition" HorizontalAlignment="Left" Visibility="Visible" Height="24" TickFrequency="1" TickPlacement="None" IsSnapToTickEnabled="True" Margin="173,360,0,0" VerticalAlignment="Top" Width="603"  Maximum="100" ValueChanged="sdrPosition_ValueChanged"/>
         <Label x:Name="lblTime" Margin="696,321,89,63" Content=""/>
         <!--Queue managment-->
-        <ListBox Name="lsQueue" BorderThickness="0" HorizontalAlignment="Left" Height="316" Margin="704,0,0,0" VerticalAlignment="Top" Width="151" SelectionChanged="lsQueue_SelectionChanged" />
+        <ListBox Name="lsQueue" BorderThickness="0" HorizontalAlignment="Left" Height="316" Margin="712,0,0,0" VerticalAlignment="Top" Width="151" SelectionChanged="lsQueue_SelectionChanged" />
         <Button Name="btnQueueUp" Content="^" Visibility="Hidden" HorizontalAlignment="Left" Height="20" Margin="693,38,0,0" VerticalAlignment="Top" Width="20" Click="btnQueueUp_Click"/>
         <Button Name="btnQueueDown" Content="^" Visibility="Hidden" HorizontalAlignment="Left" Height="20" Margin="693,80,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="0.5,0.5" Click="btnQueueDown_Click">
             <Button.RenderTransform>
