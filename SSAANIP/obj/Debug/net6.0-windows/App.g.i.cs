@@ -45,11 +45,11 @@ namespace SSAANIP {
         /// InitializeComponent
         /// </summary>
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "8.0.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "7.0.5.0")]
         public void InitializeComponent() {
             
             #line 5 "..\..\..\App.xaml"
-            this.StartupUri = new System.Uri("master.xaml", System.UriKind.Relative);
+            this.StartupUri = new System.Uri("masterWindow.xaml", System.UriKind.Relative);
             
             #line default
             #line hidden
@@ -60,7 +60,7 @@ namespace SSAANIP {
         /// </summary>
         [System.STAThreadAttribute()]
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "8.0.0.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "7.0.5.0")]
         public static void Main() {
             SSAANIP.App app = new SSAANIP.App();
             app.InitializeComponent();
