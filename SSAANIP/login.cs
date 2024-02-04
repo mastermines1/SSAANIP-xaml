@@ -1,7 +1,7 @@
-﻿using System.Windows.Controls;
-using System.Windows;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 namespace SSAANIP;
 public partial class loginPage : Page{
     protected masterWindow parent;
@@ -12,8 +12,8 @@ public partial class loginPage : Page{
         parent = master;
     }
     public async void login(object sender, RoutedEventArgs e) {
-        string username = usrBox.Text.ToString();
-        string password = pwdBox.Password.ToString();
+        string username = usrBox.Text;
+        string password = pwdBox.Password;
         req = new(username, password);
         try{
             var response = await req.sendRequestAsync("ping","");           
