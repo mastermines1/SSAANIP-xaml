@@ -34,8 +34,6 @@ public partial class MainWindow : Page {
         InitializeComponent();
         parent = master;
         this.req = req;
-
-
         update = new(connectionString, req);
         update.updateUsers();
         cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
@@ -48,7 +46,6 @@ public partial class MainWindow : Page {
                 cmd.ExecuteScalar();
             }
         }
-        //fetch.updateDB();
         displayArtists();
     }
     private async Task nextSong(){
@@ -96,7 +93,7 @@ public partial class MainWindow : Page {
             btnClearQueue.Visibility = Visibility.Visible;
         }
     }
-    private void playSongsFromList(List<string> songIds){
+    private async Task playSongsFromList(List<string> songIds){
         if(songIds.Count > 0){
             songIndex.Clear();
             for (int i = 0; i < songIds.Count; i++){
@@ -106,11 +103,11 @@ public partial class MainWindow : Page {
                 songIndex = shuffle(songIndex);
             }
             currentSongIds = songIds.ToArray();
-            nextSong();
+            await nextSong();
             mediaElement.Play();
         }
     }
-    private void playSong(string songId, string sourceType){
+    private async Task playSong(string songId, string sourceType){
         int selectedSongIndex;
         using (SQLiteConnection conn = new(connectionString))
         using (SQLiteCommand cmd = conn.CreateCommand()){
@@ -127,7 +124,7 @@ public partial class MainWindow : Page {
             songIndex.Enqueue(i);
         }
         prioNextUp = songId;
-        nextSong();
+        await nextSong();
         mediaElement.Play();
         if (btnShuffleToggle.Background == Brushes.GreenYellow) songIndex = shuffle(songIndex);
         btnPlayPause.Content = "||";
@@ -687,7 +684,6 @@ public partial class MainWindow : Page {
         for(int i=0; i< noOfSongs; i++){
             req.sendRequestAsync("updatePlaylist", $"&playlistId={playlistId}&songIndexToRemove={i}");
         }
-            
         int index = 0;
         string songId = string.Empty;
         foreach (string songName in lsPlaylistEditSongs.Items){
@@ -720,6 +716,7 @@ public partial class MainWindow : Page {
     private async void btnEditPlaylist_Click(object sender, RoutedEventArgs e){
         txtPlaylistName.Text = lsPlaylists.SelectedItem.ToString();
         playlistEdited = lsPlaylists.SelectedItem.ToString();
+        lsPlaylistEditSongs.Items.Clear();
         using (SQLiteConnection conn = new(connectionString))
         using (var cmd = conn.CreateCommand()){
             conn.Open();
@@ -888,6 +885,31 @@ public partial class MainWindow : Page {
             cmd.Parameters.Add(new("@songId", songId));
             cmd.Parameters.Add(new("@index", index));
             cmd.ExecuteScalar();
+        }
+    }
+    private async void btnDeletePlaylist_Click(object sender, RoutedEventArgs e){
+        if (MessageBox.Show("Are you sure?\n This is a permanent change","Confirm",MessageBoxButton.OKCancel) == MessageBoxResult.OK){
+            //Delete playlist
+            string playlistId = getSourceIdFromName(txtPlaylistName.Text, "Playlist");
+            await req.sendRequestAsync("deletePlaylist", $"&id={playlistId}");
+            using (SQLiteConnection conn = new(connectionString))
+            using (var cmd = conn.CreateCommand()){
+                conn.Open();
+                cmd.CommandText = "DELETE FROM tblPlaylists WHERE playlistId = @playlistID;" +
+                    " DELETE FROM tblPlaylistSongLink WHERE playlisyId = @playlistId;" +
+                    " DELTETE FROM tblPlaylistUserLink WHERE playlistID = @playlistId";
+                cmd.Parameters.Add(new("@playlistId", playlistId));
+                cmd.ExecuteScalar();
+            }
+            lsPlaylists.Items.Remove(txtPlaylistName.Text);
+            txtPlaylistName.Text = "";
+            txtPlaylistDescription.Text = "";
+            lsPlaylistEditSongs.Items.Clear();
+            lsPlaylistsSongs.SelectedItem = null;
+            lsPlaylists.Items.Clear();
+            lsPlaylistsSongs.Items.Clear();
+            displayPlaylists();
+            grdAlbums.Visibility = Visibility.Hidden;
         }
     }
 }
