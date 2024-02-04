@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Windows.Controls;
-using System.Windows;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml.Linq;
-using System.Linq;
 namespace SSAANIP;
 public partial class MainWindow : Page {
     protected readonly updateData update;
@@ -174,7 +174,7 @@ public partial class MainWindow : Page {
             await Task.Delay(1000);
         }
     }
-    private string getIdFromUrl(string url){
+    private static string getIdFromUrl(string url){
         return url.Split('=').Last();    
     }
     private async Task<string> getSongName(string songId){
@@ -557,7 +557,6 @@ public partial class MainWindow : Page {
             btnPlaylistsToggle.Content = "Show albums";
             grdAlbums.Visibility = Visibility.Hidden;
             grdPlaylists.Visibility = Visibility.Visible;
-            grdPlaylistEdit.Visibility = Visibility.Hidden;
             lsPlaylists.Items.Clear();
             lsPlaylistsSongs.Items.Clear(); 
             displayPlaylists();
@@ -895,9 +894,9 @@ public partial class MainWindow : Page {
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
-                cmd.CommandText = "DELETE FROM tblPlaylists WHERE playlistId = @playlistID;" +
-                    " DELETE FROM tblPlaylistSongLink WHERE playlisyId = @playlistId;" +
-                    " DELTETE FROM tblPlaylistUserLink WHERE playlistID = @playlistId";
+                cmd.CommandText = "DELETE FROM tblPlaylists WHERE playlistId = @playlistId;" +
+                    " DELETE FROM tblPlaylistSongLink WHERE playlistId = @playlistId;" +
+                    " DELETE FROM tblPlaylistUserLink WHERE playlistId = @playlistId";
                 cmd.Parameters.Add(new("@playlistId", playlistId));
                 cmd.ExecuteScalar();
             }

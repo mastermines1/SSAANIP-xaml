@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Xml.Linq;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
 namespace SSAANIP;
 public class updateData{
     readonly string connectionString;
@@ -21,26 +21,23 @@ public class updateData{
             cmd.CommandText = "DELETE FROM tblAlbumArtistLink;DELETE FROM tblAlbumSongLink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;UPDATE sqlite_sequence SET seq=0 WHERE (name=\"tblAlbumArtistLink\" OR name=\"tblAlbumSongLink\")";
             cmd.ExecuteScalar();
         }
-        updateArtists();
+        await updateArtists();
     }
     private async Task updateArtists(){
-        List<string> artistsID = new();
         IEnumerable<XElement> indexes = await req.sendRequestAsync("getIndexes", "");
         foreach (XElement element in indexes.Elements().Elements().Elements()){ //get every artist id
-            artistsID.Add(element.FirstAttribute.Value);
-        }
-        foreach (string id in artistsID){ //gets the artist name
-            IEnumerable<XElement> response = await req.sendRequestAsync("getArtist","&id=" + id);
+            string artistId = element.FirstAttribute.Value.ToString();  
+            IEnumerable<XElement> response = await req.sendRequestAsync("getArtist","&id=" + artistId);
             string artistName = response.Elements().ElementAt(0).FirstAttribute.NextAttribute.Value;
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
                 cmd.CommandText = "INSERT INTO tblArtists VALUES (@id,@name)";
-                cmd.Parameters.Add(new("@id", id));
+                cmd.Parameters.Add(new("@id", artistId));
                 cmd.Parameters.Add(new("@name", artistName));
                 cmd.ExecuteScalar();
             }
-            updateAlbums(id);
+            await updateAlbums(artistId);
         }
     }
     private async Task updateAlbums(string artistID){
@@ -64,7 +61,7 @@ public class updateData{
                 cmd.Parameters.Add(new("@albumId", currentAlbumId));
                 cmd.ExecuteScalar();
             }
-            updateTracks(currentAlbumId);
+            await updateTracks(currentAlbumId);
         }
     }
     private async Task updateTracks(string albumID){
@@ -92,37 +89,6 @@ public class updateData{
             index += 1;
         }
     }
-    private async Task updatePlaylists(){
-        IEnumerable<XElement> playlistsData = await req.sendRequestAsync("getPlaylists", "");
-        foreach (XElement playlist in playlistsData.Elements().Elements()){
-            IEnumerable<XElement> playlistData = await req.sendRequestAsync("getPlaylist", "&id=" + playlist.Attribute("id").Value.ToString());
-            using (SQLiteConnection conn = new(connectionString))
-            using (var cmd = conn.CreateCommand()){
-                conn.Open();
-                cmd.CommandText = "UPDATE tblPlaylists SET(playlistId=@id, playlistName=@name, playlistDuration=@duration, isPublic=@isPublic) WHERE playlistId=@id";
-                cmd.Parameters.Add(new("@id", playlist.Attribute("id").Value));
-                cmd.Parameters.Add(new("@name",playlist.Attribute("name").Value));
-                cmd.Parameters.Add(new("@duration",playlist.Attribute("duration").Value));
-                cmd.Parameters.Add(new("@isPublic", playlist.Attribute("public").Value));
-                cmd.ExecuteScalar();
-            }
-            int index = 0;
-            foreach(XElement song in playlistData.Elements().Elements()){
-                if(song.Name == "entry"){
-                    using (SQLiteConnection conn = new(connectionString))
-                    using (var cmd = conn.CreateCommand()){
-                        conn.Open();
-                        cmd.CommandText = "INSERT INTO tblPlaylistSongLink (playlistId, songId, songIndex) VALUES (@playlistId, @songId, @songIndex)";
-                        cmd.Parameters.Add(new("@playlistId", playlist.Attribute("id").Value));
-                        cmd.Parameters.Add(new("songId", song.FirstAttribute.Value));
-                        cmd.Parameters.Add(new("songIndex", index));
-                        cmd.ExecuteScalar();
-                    }
-                    index ++;
-                }
-            }
-        }
-    }        
     public async Task updateUsers(){
         var authenticatedUserInfo = await req.sendRequestAsync("getUser", "&id=" + req.username);
         if(authenticatedUserInfo.Elements().First().Attribute("adminRole").Value.ToString() == "true"){
