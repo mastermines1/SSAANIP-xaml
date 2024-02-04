@@ -3,6 +3,7 @@ using System.Data.SQLite;
 using System.Xml.Linq;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 namespace SSAANIP;
 public class updateData{
     readonly string connectionString;
@@ -123,38 +124,48 @@ public class updateData{
         }
     }        
     public async Task updateUsers(){
-        var test = await req.sendGetUserDataAsync();
-        IEnumerable<XElement> usersInfo;
         var authenticatedUserInfo = await req.sendRequestAsync("getUser", "&id=" + req.username);
         if(authenticatedUserInfo.Elements().First().Attribute("adminRole").Value.ToString() == "true"){
-            usersInfo = (await req.sendRequestAsync("getUsers","")).Elements();
+            JArray usersInfo = await req.sendGetUserDataAsync();
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
                 cmd.CommandText = "DELETE FROM tblUsers";
                 cmd.ExecuteScalar();
             }
-        } else usersInfo = authenticatedUserInfo;
-        foreach(XElement user in usersInfo.Elements()){
-            bool alrExists = false;
-            using (SQLiteConnection conn = new(connectionString))
-            using (var cmd = conn.CreateCommand()){
-                conn.Open();
-                cmd.CommandText = "SELECT userName FROM tblUsers WHERE userName = @username";
-                cmd.Parameters.Add(new("@username", user.Attribute("username").Value.ToString().ToLower()));
-                using SQLiteDataReader reader = cmd.ExecuteReader();
-                while (reader.Read()){
-                    alrExists = true;
-                }  
-            }
-            if (!alrExists){
+            foreach(JToken user in usersInfo.Children()){
                 using (SQLiteConnection conn = new(connectionString))
                 using (var cmd = conn.CreateCommand()){
                     conn.Open();
                     cmd.CommandText = "INSERT INTO tblUsers VALUES (@userName,@isAdmin)";
-                    cmd.Parameters.Add(new("@userName", user.Attribute("username").Value.ToString().ToLower()));
-                    cmd.Parameters.Add(new("@isAdmin", user.Attribute("adminRole").Value.ToString()));
+                    cmd.Parameters.Add(new("@userName", user.SelectToken("userName").ToString().ToLower()));
+                    cmd.Parameters.Add(new("@isAdmin", user.SelectToken("isAdmin").ToString().ToLower()));
                     cmd.ExecuteScalar();
+                }
+            }
+        }
+        else{
+            foreach(XElement user in authenticatedUserInfo.Elements()){
+                bool alrExists = false;
+                using (SQLiteConnection conn = new(connectionString))
+                using (var cmd = conn.CreateCommand()){
+                    conn.Open();
+                    cmd.CommandText = "SELECT userName FROM tblUsers WHERE userName = @username";
+                    cmd.Parameters.Add(new("@username", user.Attribute("username").Value.ToString().ToLower()));
+                    using SQLiteDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read()){
+                        alrExists = true;
+                    }  
+                }
+                if (!alrExists){
+                    using (SQLiteConnection conn = new(connectionString))
+                    using (var cmd = conn.CreateCommand()){
+                        conn.Open();
+                        cmd.CommandText = "INSERT INTO tblUsers VALUES (@userName,@isAdmin)";
+                        cmd.Parameters.Add(new("@userName", user.Attribute("username").Value.ToString().ToLower()));
+                        cmd.Parameters.Add(new("@isAdmin", user.Attribute("adminRole").Value.ToString()));
+                        cmd.ExecuteScalar();
+                    }
                 }
             }
         }

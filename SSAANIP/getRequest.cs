@@ -7,8 +7,6 @@ using System.Security.Cryptography;
 using System;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using System.Xml;
-
 namespace SSAANIP;
 public class Request{
     private readonly string socket;  //the socket that the subsonic server is located at
@@ -30,20 +28,19 @@ public class Request{
         this.clientName = "SocketTest";
         this.password = password;
     }
-    public async Task<IEnumerable<XElement>> sendRequestAsync(string request, string extraParams){
+    public async Task<IEnumerable<XElement>> sendRequestAsync(string request, string extraParams){ //sends a GET request to the API to the given endpoint with the given parameters
         HttpClient client = new();
         using HttpResponseMessage responseMessage = await client.GetAsync(createURL(request,extraParams));
         responseMessage.EnsureSuccessStatusCode();
-        IEnumerable<XElement> collection = XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
-        return collection;
+        return XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
     }
-    private static string createSalt(int size){ //generates a salt of set size 
+    private static string createSalt(int size){ //generates a salt of given size for use in hashing
         RandomNumberGenerator rng = RandomNumberGenerator.Create();
         byte[] salt = new byte[size];
         rng.GetBytes(salt);
         return Convert.ToHexString(salt);
     }
-    public string createURL(string request, string extraParams){
+    public string createURL(string request, string extraParams){ //generates a URL for the given request, including the extra parameters
         MD5 md5 = MD5.Create();
         string salt = createSalt(16);
         byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(password + salt);
@@ -94,7 +91,7 @@ public class Request{
             await client.PutAsync(update_user_url, stringContent);
         }
     }
-    public async Task<XDocument> sendGetUserDataAsync(){
+    public async Task<JArray> sendGetUserDataAsync(){
         HttpClient client = new();
         string token = await getTokenJsonAsync(socket);
         if(token != null){
@@ -103,8 +100,7 @@ public class Request{
             HttpResponseMessage get_response = await client.GetAsync(get_url);
             string responseBody = await get_response.Content.ReadAsStringAsync();
             JArray response = JArray.Parse(responseBody);
-            XmlDocument xdoc = JsonConvert.DeserializeXmlNode(responseBody);
-            return new();
+            return response;
         }
         return new("error");
     }

@@ -63,7 +63,7 @@ public partial class userMgmt : Page{
                 }else{
                     MessageBox.Show("You cannot delete the only admin user.", "Error");
                 }
-            }else{ //incorrect password
+            }else{//incorrect password
                 lblConfirm.Text = "Incorrect password";
             }
         }else{
@@ -74,14 +74,14 @@ public partial class userMgmt : Page{
     private async void btnAdmin_Click(object sender, RoutedEventArgs e){
         if(adminPanel.Visibility == Visibility.Visible){
             adminPanel.Visibility = Visibility.Hidden;
-        }else {
-            if (await confirmPassword(confirmPass)){
+        }else{
+            if(await confirmPassword(confirmPass)){
                 adminPanel.Visibility = Visibility.Visible;
                 lblConfirm.Text = "";
                 confirmPass.Password = "";
                 confirmPass.Visibility = Visibility.Hidden;
                 btnAdmin.Content = "Admin panel";
-            } else{
+            }else{
                 confirmPass.Visibility = Visibility.Visible;
                 lblConfirm.Text = "Confirm your password.";
                 btnAdmin.Content = "Continue";
@@ -138,9 +138,7 @@ public partial class userMgmt : Page{
                 cmd.Parameters.Add(new("@username", lsUserNames.SelectedItem.ToString()));
                 isAdmin = cmd.ExecuteScalar().ToString();
             }
-            if (isAdmin == "true") ckbIsAdmin.IsChecked = true;
-            else ckbIsAdmin.IsChecked = false;
-            //            ckbIsAdmin.IsChecked = isAdmin == "true" ? true : false;
+            ckbIsAdmin.IsChecked = isAdmin == "true" ? true : false;
         }
     }
     private async void btnDeleteUser_Click(object sender, RoutedEventArgs e){
