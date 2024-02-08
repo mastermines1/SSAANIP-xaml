@@ -2,26 +2,31 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 namespace SSAANIP;
 public class updateData{
     readonly string connectionString;
     readonly Request req;
+    SemaphoreSlim slim = new(1, 1);
     public updateData(string connectionString, Request req){
         this.connectionString = connectionString;
         this.req = req;
     }
     // Methods to update data in the local database
     public async Task updateDB(){
-        await req.sendRequestAsync("startScan", "");
-        using (SQLiteConnection conn = new(connectionString))
-        using (var cmd = conn.CreateCommand()){
-            conn.Open();
-            cmd.CommandText = "DELETE FROM tblAlbumArtistLink;DELETE FROM tblAlbumSongLink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;UPDATE sqlite_sequence SET seq=0 WHERE (name=\"tblAlbumArtistLink\" OR name=\"tblAlbumSongLink\")";
-            cmd.ExecuteScalar();
-        }
-        await updateArtists();
+        try{
+            await slim.WaitAsync();
+            await req.sendRequestAsync("startScan", "");
+            using (SQLiteConnection conn = new(connectionString))
+            using (var cmd = conn.CreateCommand()){
+                conn.Open();
+                cmd.CommandText = "DELETE FROM tblAlbumArtistLink;DELETE FROM tblAlbumSongLink;DELETE FROM tblAlbums;DELETE FROM tblArtists;DELETE FROM tblSongs;UPDATE sqlite_sequence SET seq=0 WHERE (name=\"tblAlbumArtistLink\" OR name=\"tblAlbumSongLink\")";
+                cmd.ExecuteScalar();
+            }
+            await updateArtists();
+        }finally{slim.Release();}
     }
     private async Task updateArtists(){
         IEnumerable<XElement> indexes = await req.sendRequestAsync("getIndexes", "");

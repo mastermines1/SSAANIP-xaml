@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SSAANIP.Request">
+    <Position X="8" Y="3" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="SSAANIP.Request.json_data">
+        <TypeIdentifier>
+          <NewMemberFileName>getRequest.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AEAAAOAAAAgAAAAABAAAAAECQAAAAAAAAAEAAgAgAIE=</HashCode>
+      <FileName>getRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSAANIP.updateData">
+    <Position X="10.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAgQAAIAQAAAAAgAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>updateData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSAANIP.MainWindow">
+    <Position X="12.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAIQEKAgQMAwCGhlJEZCIBkwbyoghKDCDIYIJJgkKA4=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

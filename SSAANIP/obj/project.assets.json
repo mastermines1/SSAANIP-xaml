@@ -125,19 +125,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Miles_Campbell\\.nuget\\packages\\": {}
+    "C:\\Users\\Miles\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\SSAANIP.csproj",
+      "projectUniqueName": "C:\\Users\\Miles\\source\\repos\\SSAANIP-xaml\\SSAANIP\\SSAANIP.csproj",
       "projectName": "SSAANIP",
-      "projectPath": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\SSAANIP.csproj",
-      "packagesPath": "C:\\Users\\Miles_Campbell\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\obj\\",
+      "projectPath": "C:\\Users\\Miles\\source\\repos\\SSAANIP-xaml\\SSAANIP\\SSAANIP.csproj",
+      "packagesPath": "C:\\Users\\Miles\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Miles\\source\\repos\\SSAANIP-xaml\\SSAANIP\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Miles_Campbell\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Miles\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -183,24 +183,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[6.0.26, 6.0.26]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[6.0.26, 6.0.26]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[6.0.26, 6.0.26]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[6.0.26, 6.0.26]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -209,7 +191,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
       }
     }
   }
