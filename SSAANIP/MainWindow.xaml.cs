@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml.Linq;
+using System.Threading;
 namespace SSAANIP;
 public partial class MainWindow : Page {
     protected readonly updateData update;
@@ -42,7 +43,15 @@ public partial class MainWindow : Page {
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()) {
                 conn.Open(); //out of date
-                cmd.CommandText = "CREATE TABLE \"tblAlbumArtistlink\" (\r\n\t\"linkId\"\tTEXT,\r\n\t\"artistId\"\tTEXT,\r\n\t\"AlbumId\"\tTEXT,\r\n\tPRIMARY KEY(\"linkId\"),\r\n\tFOREIGN KEY(\"AlbumId\") REFERENCES \"tblAlbums\"(\"albumID\"),\r\n\tFOREIGN KEY(\"artistId\") REFERENCES \"tblArtists\"(\"artistId\")\r\n);CREATE TABLE \"tblAlbums\" (\r\n\t\"albumID\"\tTEXT,\r\n\t\"albumName\"\tTEXT,\r\n\t\"albumDuration\"\tTEXT,\r\n\tPRIMARY KEY(\"albumID\")\r\n);CREATE TABLE \"tblArtists\" (\r\n\t\"artistId\"\tTEXT,\r\n\t\"artistName\"\tTEXT,\r\n\tPRIMARY KEY(\"artistId\")\r\n);CREATE TABLE \"tblSongs\" (\r\n\t\"songId\"\tTEXT,\r\n\t\"songName\"\tTEXT,\r\n\t\"songDuration\"\tTEXT,\r\n\t\"albumId\"\tTEXT,\r\n\t\"songIndex\"\tTEXT,\r\n\tPRIMARY KEY(\"songId\"),\r\n\tFOREIGN KEY(\"albumId\") REFERENCES \"tblAlbums\"(\"albumID\")\r\n)CREATE TABLE \"tblPlaylistAlbumLink\" (\r\n\t\"linkId\"\tINTEGER,\r\n\t\"playlistId\"\tTEXT,\r\n\t\"artistID\"\tTEXT,\r\n\tPRIMARY KEY(\"linkId\" AUTOINCREMENT),\r\n\tFOREIGN KEY(\"artistID\") REFERENCES \"tblAlbums\"(\"albumId\"),\r\n\tFOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\")\r\n)CREATE TABLE \"tblPlaylistSongLink\" (\r\n\t\"linkId\"\tINTEGER,\r\n\t\"playlistId\"\tTEXT,\r\n\t\"songId\"\tTEXT,\r\n\tPRIMARY KEY(\"linkId\" AUTOINCREMENT),\r\n\tFOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),\r\n\tFOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\")\r\n);CREATE TABLE \"tblPlaylists\" (\r\n\t\"playlistId\"\tTEXT,\r\n\t\"playlistName\"\tTEXT,\r\n\t\"playlistDuration\"\tTEXT,\r\n\tPRIMARY KEY(\"playlistId\")\r\n)";
+                cmd.CommandText = "CREATE TABLE \"tblAlbumArtistLink\" (\"linkId\"\tINTEGER,\"artistId\"TEXT,\"AlbumId\"TEXT,FOREIGN KEY(\"artistId\") REFERENCES \"tblArtists\"(\"artistId\"),PRIMARY KEY(\"linkId\" AUTOINCREMENT))" +
+                    "CREATE TABLE \"tblAlbumSongLink\" (\"linkid\"INTEGER,\"albumId\"TEXT,\"songId\"TEXT,\"songIndex\"INTEGER,PRIMARY KEY(\"linkid\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"albumId\") REFERENCES \"tblAlbums\"(\"albumId\"))" +
+                    "CREATE TABLE \"tblAlbums\" (\"albumId\"\tTEXT,\"albumName\"\tTEXT,\"albumDuration\"\tTEXT,PRIMARY KEY(\"albumId\"))" +
+                    "CREATE TABLE \"tblArtists\" (\"artistId\"\tTEXT,\"artistName\"\tTEXT,PRIMARY KEY(\"artistId\"))" +
+                    "CREATE TABLE \"tblPlaylistSongLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"songId\"\tTEXT,\"songIndex\"\tINTEGER,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"))" +
+                    "CREATE TABLE \"tblPlaylistUserLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"userName\"\tTEXT,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"),FOREIGN KEY(\"userName\") REFERENCES \"tblUsers\"(\"userName\"))" +
+                    "CREATE TABLE \"tblPlaylists\" (\"playlistId\"\tTEXT,\"playlistName\"\tTEXT,\"playlistDuration\"\tTEXT,\"isPublic\"\tTEXT,\"playlistDescription\"\tTEXT,PRIMARY KEY(\"playlistId\"))" +
+                    "CREATE TABLE \"tblSongs\" (\"songId\"\tTEXT,\"songName\"\tTEXT,\"songDuration\"\tTEXT,PRIMARY KEY(\"songId\"))" +
+                    "CREATE TABLE \"tblUsers\" (\"userName\"\tTEXT,\"isAdmin\"\tTEXT,PRIMARY KEY(\"userName\"))";
                 cmd.ExecuteScalar();
             }
         }
@@ -129,6 +138,7 @@ public partial class MainWindow : Page {
         if (btnShuffleToggle.Background == Brushes.GreenYellow) songIndex = shuffle(songIndex);
         btnPlayPause.Content = "||";
         isPaused = false;
+        updateSdr(songId);
     }
     private List<string> getSongIdsFromSourceId(string sourceId, string sourceType){
         List<string> songIds = new();    
@@ -242,6 +252,7 @@ public partial class MainWindow : Page {
     private void stop(){
         updatePosition = false;
         mediaElement.Stop();
+        songIndex.Clear();
         queue.Clear();
         prevPlayed.Clear();
         btnPlayPause.Content = "⏵";
@@ -400,7 +411,7 @@ public partial class MainWindow : Page {
         nextSong();
     }
     private void btnNextSong_click(object sender, RoutedEventArgs e){
-        if (!fromQueue) prevPlayed.Push(getIdFromUrl(mediaElement.Source.ToString()));
+        if (!fromQueue && mediaElement.Source != null) prevPlayed.Push(getIdFromUrl(mediaElement.Source.ToString()));
         nextSong();
     }
     private void btnPrevSong_Click(object sender, RoutedEventArgs e){
@@ -458,7 +469,6 @@ public partial class MainWindow : Page {
             case 2:
                 btnLoopToggle.Content = "🔂";
                 break;
-
         }
     }
     private void btnShuffleToggle_Click(object sender, RoutedEventArgs e){
@@ -710,6 +720,7 @@ public partial class MainWindow : Page {
         lsPlaylists.Items.Clear();
         lsPlaylistsSongs.Items.Clear();
         displayPlaylists();
+        cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
         grdPlaylistEdit.Visibility = Visibility.Hidden;
     }
     private async void btnEditPlaylist_Click(object sender, RoutedEventArgs e){
@@ -819,10 +830,10 @@ public partial class MainWindow : Page {
         updateQueue(new string[] { getSourceIdFromName(lsPlaylistsSongs.SelectedItem.ToString(), "Song") });
     }
     private void cobPlaylists_SelectionChanged(object sender, SelectionChangedEventArgs e){
-        if(cobPlaylists.SelectedItem != null && lsArtist.SelectedItem != null){
+        if(cobPlaylists.SelectedItem != null && lsAlbums.SelectedItem != null){
             btnAddAlbumToPlaylist.Visibility = Visibility.Visible;
         }
-        else if (cobPlaylists.SelectedItem != null && lsAlbums.SelectedItem != null){
+        else if (cobPlaylists.SelectedItem != null && lsSongs.SelectedItem != null){
             btnAddSongToPlaylist.Visibility = Visibility.Visible;
         }else{
             btnAddAlbumToPlaylist.Visibility = Visibility.Hidden;

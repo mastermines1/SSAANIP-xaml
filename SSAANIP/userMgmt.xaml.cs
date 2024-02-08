@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -175,8 +176,13 @@ public partial class userMgmt : Page{
         }
     }
     private async void btnChangePassword_Click(object sender, RoutedEventArgs e){
-        if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
-            await req.sendUpdateUserAsync(req.username, txtNewPassword.Text, "null");
+        pwdChange.Visibility = Visibility.Visible;
+        btnChangePassword.Content = "Confirm";
+        if (await confirmPassword(pwdChange)){
+            await req.sendChangeUserPasswordAsync(req.username, txtNewPassword.Text, pwdChange.Password);
+            pwdChange.Password = "";
+            pwdChange.Visibility = Visibility.Hidden;
+            btnChangePassword.Content = "Update";
         }
     }
 }
