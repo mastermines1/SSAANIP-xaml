@@ -23,7 +23,7 @@ public partial class userMgmt : Page{
         lblUserName.Content = "Username: " + userData.Elements().First().FirstAttribute.Value;
         if (userData.Elements().First().Attribute("adminRole").Value == "true") btnAdmin.Visibility = Visibility.Visible;
     }
-    public async Task<Boolean> confirmPassword(PasswordBox pwdBox){
+    public async Task<bool> confirmPassword(PasswordBox pwdBox){
         string password = pwdBox.Password;
         Request tempReq = new(req.username, password);
         IEnumerable<XElement> data = await tempReq.sendRequestAsync("ping","");
@@ -105,7 +105,7 @@ public partial class userMgmt : Page{
         master.Frame.Content = new MainWindow(master, req);
     }
     private async void btnAddUser_Click(object sender, RoutedEventArgs e){
-        if(pwdPassword.Password == pwdConfirmPassword.Password){
+        if(pwdPassword.Password == pwdConfirmPassword.Password && txtUserName.Text != null && pwdPassword != null){
             string username = txtUserName.Text;
             string password = pwdPassword.Password;
             bool isAdmin = checkBoxAdmin.IsChecked.Value;
@@ -122,9 +122,12 @@ public partial class userMgmt : Page{
             txtUserName.Text = "";
             pwdPassword.Password = "";
             pwdConfirmPassword.Password = "";
-            lblOutput.Content = $"User {username} Created";
+            txtOutput.Text = $"User {username} Created";
+        }
+        else if(txtUserName.Text == null || pwdPassword.Password == null){
+            txtOutput.Text = "Please enter a username and password";
         }else{
-            lblOutput.Content = "Passwords do not match";
+            txtOutput.Text = "Passwords do not match";
         }
     }
     private void lsUserNames_SelectionChanged(object sender, SelectionChangedEventArgs e){
