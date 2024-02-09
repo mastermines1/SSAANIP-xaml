@@ -18,7 +18,5 @@
         <Label HorizontalAlignment="Left" Height="67" Margin="642,219,0,0" VerticalAlignment="Top" Width="142">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Allows the server to identify your client.Can be changed in config.txt" VerticalAlignment="Top"/>
         </Label>
-
-
     </Grid>
 </Page>

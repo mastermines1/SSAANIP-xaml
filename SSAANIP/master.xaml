@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:SSAANIP"
         mc:Ignorable="d"
         Title="SSAANIP" Width="865" Height="414"  ResizeMode="NoResize" Background="White" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" >
-
     <Frame Name="Frame" NavigationUIVisibility="Hidden" >
 </Frame>
 
