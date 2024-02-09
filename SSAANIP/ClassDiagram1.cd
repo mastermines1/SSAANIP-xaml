@@ -13,19 +13,19 @@
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AEAAAOAAAAgAAAAABAAAAAECQAAAAAAAAAEAAgAgAIE=</HashCode>
+      <HashCode>AEAAAOAAAAgAAAAABAAAAAECQAAAAAAAAAEgAgAgAIE=</HashCode>
       <FileName>getRequest.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSAANIP.updateData">
     <Position X="10.25" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAgAAAgQAAIAQAAAAAgAAAAAAABAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAgAAAgQAAIAQAAAAAgAAAABAABAAAAAAAA=</HashCode>
       <FileName>updateData.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSAANIP.MainWindow">
-    <Position X="12.75" Y="3.25" Width="1.5" />
+    <Position X="12" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAIQEKAgQMAwCGhlJEZCIBkwbyoghKDCDIYIJJgkKA4=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>

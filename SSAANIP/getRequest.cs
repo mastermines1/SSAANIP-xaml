@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Packaging;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -34,19 +35,19 @@ public class Request {
         responseMessage.EnsureSuccessStatusCode();
         return XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
     }
-    private static string createSalt(int size) { //generates a salt of given size for use in hashing
-        RandomNumberGenerator rng = RandomNumberGenerator.Create();
-        byte[] salt = new byte[size];
-        rng.GetBytes(salt);
-        return Convert.ToHexString(salt);
-    }
-    public string createURL(string request, string extraParams) { //generates a URL for the given request, including the extra parameters
+    public Uri createURL(string request, string extraParams){ //generates a URL for the given request, including the extra parameters
         MD5 md5 = MD5.Create();
         string salt = createSalt(16);
         byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(password + salt);
         byte[] hashed = md5.ComputeHash(inputBytes);
         string authToken = Convert.ToHexString(hashed).ToLower();
-        return $@"http://{socket}/rest/{request}?u={username}&t={authToken}&s={salt}&v={version}&c={clientName}{extraParams}";
+        return new($@"http://{socket}/rest/{request}?u={username}&t={authToken}&s={salt}&v={version}&c={clientName}{extraParams}");
+    }
+    private static string createSalt(int size) { //generates a salt of given size for use in hashing
+        RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        byte[] salt = new byte[size];
+        rng.GetBytes(salt);
+        return Convert.ToHexString(salt);
     }
     public async Task sendCreateUserAsync(string username, string password, bool isAdmin) {
         HttpClient client = new();
