@@ -64,21 +64,21 @@ public partial class MainWindow : Page {
             mediaElement.Position = new TimeSpan(0);
         }
         else if(prioNextUp != null){
-            mediaElement.Source = new Uri(req.createURL("stream", "&id=" + prioNextUp));
+            mediaElement.Source = req.createURL("stream", "&id=" + prioNextUp);
             lblSongPlaying.Content = await getSongName(prioNextUp) + " | " + await getArtistNameFromSong(prioNextUp);
             prioNextUp = null;
         }
         else if(queue.Count > 0){
             fromQueue = true;
             currentSongId = queue.Dequeue();
-            mediaElement.Source = new Uri(req.createURL("stream", "&id=" + currentSongId));
+            mediaElement.Source = req.createURL("stream", "&id=" + currentSongId);
             lblSongPlaying.Content = await getSongName(currentSongId) + " | " + await getArtistNameFromSong(currentSongId);
             lsQueue.Items.RemoveAt(0);
         }
         else if (songIndex.Count > 0 ){
             currentSongIndex = songIndex.Dequeue();
             currentSongId = currentSongIds[currentSongIndex];
-            mediaElement.Source = new Uri(req.createURL("stream", "&id=" + currentSongId));
+            mediaElement.Source = req.createURL("stream", "&id=" + currentSongId);
             lblSongPlaying.Content = await getSongName(currentSongId) + " | " + await getArtistNameFromSong(currentSongId);
         }
         else if(songIndex.Count == 0 && loopMode == 1){
@@ -298,6 +298,7 @@ public partial class MainWindow : Page {
     private void displayPlaylists(){
         List<string> playlistNames = getSourceNamesFromType("Playlist");
         foreach(string playlistName in playlistNames){
+
             lsPlaylists.Items.Add(playlistName);
         }
     }
@@ -563,10 +564,14 @@ public partial class MainWindow : Page {
             btnPlaylistsToggle.Content = "Show playlists";
             grdAlbums.Visibility = Visibility.Visible;
             grdPlaylists.Visibility = Visibility.Hidden;
-        } else{ //toggle to playlists
+        }else{ //toggle to playlists
             btnPlaylistsToggle.Content = "Show albums";
             grdAlbums.Visibility = Visibility.Hidden;
             grdPlaylists.Visibility = Visibility.Visible;
+            btnPlayPlaylist.Visibility = Visibility.Hidden;
+            btnQueuePlaylist.Visibility = Visibility.Hidden;
+            btnPlayPlaylistSong.Visibility = Visibility.Hidden;
+            btnQueuePlaylistSong.Visibility = Visibility.Hidden;
             lsPlaylists.Items.Clear();
             lsPlaylistsSongs.Items.Clear(); 
             displayPlaylists();
