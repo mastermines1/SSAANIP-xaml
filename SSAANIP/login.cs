@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 namespace SSAANIP;
@@ -16,16 +18,19 @@ public partial class loginPage : Page{
         string password = pwdBox.Password;
         req = new(username, password);
         try{
-            var response = await req.sendRequestAsync("ping","");           
+            var response = await req.sendRequestAsync("ping", "");
             if (response.First().Attribute("status").Value.ToString() == "ok"){ //valid username and password
-                parent.Frame.Content = new MainWindow(parent,req);
-            }else{
+                parent.Frame.Content = new MainWindow(parent, req);
+            }
+            else{
                 output.Content = "Invalid username or password";
                 pwdBox.Clear();
             }
-        }catch{
+        }catch(HttpRequestException){
             output.Content = "Cant access server";
-        }            
+        }catch{
+            output.Content = "Unknown error";
+        }  
     }
     public void changeServer(object sender, RoutedEventArgs e){
         File.Delete("config.txt");

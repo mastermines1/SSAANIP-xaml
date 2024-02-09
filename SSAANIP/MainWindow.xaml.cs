@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml.Linq;
-using System.Threading;
 namespace SSAANIP;
 public partial class MainWindow : Page {
     protected readonly updateData update;
@@ -36,25 +35,25 @@ public partial class MainWindow : Page {
         parent = master;
         this.req = req;
         update = new(connectionString, req);
-        update.updateUsers();
-        cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
-        if (!File.Exists("data.db")) { //checks if file exists
-            File.Create("data.db");
+        if (!File.Exists("data.db")) { //checks if file exists and if not creates one
+            File.Create("data.db").Close();            
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()) {
-                conn.Open(); //out of date
-                cmd.CommandText = "CREATE TABLE \"tblAlbumArtistLink\" (\"linkId\"\tINTEGER,\"artistId\"TEXT,\"AlbumId\"TEXT,FOREIGN KEY(\"artistId\") REFERENCES \"tblArtists\"(\"artistId\"),PRIMARY KEY(\"linkId\" AUTOINCREMENT))" +
-                    "CREATE TABLE \"tblAlbumSongLink\" (\"linkid\"INTEGER,\"albumId\"TEXT,\"songId\"TEXT,\"songIndex\"INTEGER,PRIMARY KEY(\"linkid\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"albumId\") REFERENCES \"tblAlbums\"(\"albumId\"))" +
-                    "CREATE TABLE \"tblAlbums\" (\"albumId\"\tTEXT,\"albumName\"\tTEXT,\"albumDuration\"\tTEXT,PRIMARY KEY(\"albumId\"))" +
-                    "CREATE TABLE \"tblArtists\" (\"artistId\"\tTEXT,\"artistName\"\tTEXT,PRIMARY KEY(\"artistId\"))" +
-                    "CREATE TABLE \"tblPlaylistSongLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"songId\"\tTEXT,\"songIndex\"\tINTEGER,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"))" +
-                    "CREATE TABLE \"tblPlaylistUserLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"userName\"\tTEXT,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"),FOREIGN KEY(\"userName\") REFERENCES \"tblUsers\"(\"userName\"))" +
-                    "CREATE TABLE \"tblPlaylists\" (\"playlistId\"\tTEXT,\"playlistName\"\tTEXT,\"playlistDuration\"\tTEXT,\"isPublic\"\tTEXT,\"playlistDescription\"\tTEXT,PRIMARY KEY(\"playlistId\"))" +
-                    "CREATE TABLE \"tblSongs\" (\"songId\"\tTEXT,\"songName\"\tTEXT,\"songDuration\"\tTEXT,PRIMARY KEY(\"songId\"))" +
-                    "CREATE TABLE \"tblUsers\" (\"userName\"\tTEXT,\"isAdmin\"\tTEXT,PRIMARY KEY(\"userName\"))";
+                conn.Open(); 
+                cmd.CommandText = "CREATE TABLE \"tblAlbumArtistLink\" (\"linkId\"\tINTEGER,\"artistId\"TEXT,\"AlbumId\"TEXT,FOREIGN KEY(\"artistId\") REFERENCES \"tblArtists\"(\"artistId\"),PRIMARY KEY(\"linkId\" AUTOINCREMENT));" +
+                    "CREATE TABLE \"tblAlbumSongLink\" (\"linkid\"INTEGER,\"albumId\"TEXT,\"songId\"TEXT,\"songIndex\"INTEGER,PRIMARY KEY(\"linkid\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"albumId\") REFERENCES \"tblAlbums\"(\"albumId\"));" +
+                    "CREATE TABLE \"tblAlbums\" (\"albumId\"\tTEXT,\"albumName\"\tTEXT,\"albumDuration\"\tTEXT,PRIMARY KEY(\"albumId\"));" +
+                    "CREATE TABLE \"tblArtists\" (\"artistId\"\tTEXT,\"artistName\"\tTEXT,PRIMARY KEY(\"artistId\"));" +
+                    "CREATE TABLE \"tblPlaylistSongLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"songId\"\tTEXT,\"songIndex\"\tINTEGER,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"));" +
+                    "CREATE TABLE \"tblPlaylistUserLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"userName\"\tTEXT,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"),FOREIGN KEY(\"userName\") REFERENCES \"tblUsers\"(\"userName\"));" +
+                    "CREATE TABLE \"tblPlaylists\" (\"playlistId\"\tTEXT,\"playlistName\"\tTEXT,\"playlistDuration\"\tTEXT,\"isPublic\"\tTEXT,\"playlistDescription\"\tTEXT,PRIMARY KEY(\"playlistId\"));" +
+                    "CREATE TABLE \"tblSongs\" (\"songId\"\tTEXT,\"songName\"\tTEXT,\"songDuration\"\tTEXT,PRIMARY KEY(\"songId\"));" +
+                    "CREATE TABLE \"tblUsers\" (\"userName\"\tTEXT,\"isAdmin\"\tTEXT,PRIMARY KEY(\"userName\"));";
                 cmd.ExecuteScalar();
             }
         }
+        update.updateUsers(); 
+        cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
         displayArtists();
     }
     private async Task nextSong(){
@@ -384,6 +383,7 @@ public partial class MainWindow : Page {
         }
     }
     private void btnPlayAlbum_clicked(object sender, RoutedEventArgs e){
+        if (loopMode == 2) loopMode = 1;
         playingSourceType = "Album";
         playingSourceId = getSourceIdFromName(lsAlbums.SelectedItem.ToString(), "Album");
         List<string> songIds = getSongIdsFromSourceId(playingSourceId, "Album");
@@ -399,6 +399,7 @@ public partial class MainWindow : Page {
         updateQueue(songIds.ToArray());
     }
     private void btnPlaySong_Click(object sender, RoutedEventArgs e){
+        if(loopMode == 2) loopMode = 1;
         playingSourceType = "Album";
         playingSourceId = getSourceIdFromName(lsSongs.SelectedItem.ToString(), "Song");
         playSong(playingSourceId, "Album");
@@ -495,6 +496,7 @@ public partial class MainWindow : Page {
             btnQueueDelete.Visibility = Visibility.Hidden;
             btnQueueDown.Visibility = Visibility.Hidden;
             btnPlaySongFromQueue.Visibility = Visibility.Hidden;
+            btnClearQueue.Visibility = Visibility.Hidden;
         }else{
             btnQueueUp.Visibility = Visibility.Visible;
             btnQueueDelete.Visibility = Visibility.Visible;

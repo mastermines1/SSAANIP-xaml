@@ -115,7 +115,7 @@ public partial class userMgmt : Page{
                 conn.Open();
                 cmd.CommandText = "INSERT INTO tblUsers VALUES (@username,@isAdmin)";
                 cmd.Parameters.Add(new("@username", username));
-                cmd.Parameters.Add(new("@isAdmin", isAdmin.ToString()));
+                cmd.Parameters.Add(new("@isAdmin", isAdmin.ToString().ToLower()));
                 cmd.ExecuteScalar();
             }
             lsUserNames.Items.Add(username);
@@ -163,7 +163,6 @@ public partial class userMgmt : Page{
         if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
             if (ckbChangePassword.IsChecked.Value) await req.sendUpdateUserAsync(txtDisplayUserName.Text.ToLower(), txtPasswordEdit.Text, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
             else await req.sendUpdateUserAsync(txtDisplayUserName.Text.ToLower(), null, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
-            await req.sendUpdateUserAsync(txtDisplayUserName.Text.ToLower(),txtPasswordEdit.Text, ckbIsAdmin.IsChecked.Value.ToString().ToLower());
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();

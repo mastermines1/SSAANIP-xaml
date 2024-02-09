@@ -32,7 +32,6 @@ public class Request {
     public async Task<IEnumerable<XElement>> sendRequestAsync(string request, string extraParams) { //sends a GET request to the API to the given endpoint with the given parameters
         HttpClient client = new();
         using HttpResponseMessage responseMessage = await client.GetAsync(createURL(request, extraParams));
-        responseMessage.EnsureSuccessStatusCode();
         return XDocument.Parse(await responseMessage.Content.ReadAsStringAsync()).Elements();
     }
     public Uri createURL(string request, string extraParams){ //generates a URL for the given request, including the extra parameters
@@ -85,7 +84,7 @@ public class Request {
             json_data update_data = new();
             if (newIsAdmin == "true") update_data.isAdmin = true;
             else if (newIsAdmin == "false") update_data.isAdmin = false;
-            if (newUsername != null) update_data.userName = username;
+            if (newUsername != null) update_data.userName = newUsername;
             if (newPassword != null) update_data.password = newPassword;
             string json = JsonConvert.SerializeObject(update_data);
             StringContent stringContent = new(json);
