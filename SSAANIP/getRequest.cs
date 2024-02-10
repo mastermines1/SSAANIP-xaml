@@ -16,10 +16,10 @@ public class Request {
     private readonly string clientName; //the name of the client in use
     private readonly string password;
     public Request(string username, string password) {
-        this.socket = File.ReadAllLines("config.txt")[0].Split("=")[1];
+        this.socket = File.ReadAllLines("./assets/config.txt")[0].Split("=")[1];
         this.username = username;
-        this.version = File.ReadAllLines("config.txt")[2].Split("=")[1];
-        this.clientName = File.ReadAllLines("config.txt")[1].Split("=")[1];
+        this.version = File.ReadAllLines("./assets/config.txt")[2].Split("=")[1];
+        this.clientName = File.ReadAllLines("./assets/config.txt")[1].Split("=")[1];
         this.password = password;
     }
     public Request(string username, string password, string socket) {

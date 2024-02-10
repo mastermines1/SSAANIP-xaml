@@ -11,7 +11,7 @@ namespace SSAANIP;
 public partial class userMgmt : Page{
     readonly protected masterWindow master;
     readonly protected Request req;
-    readonly protected string connectionString = "Data source=data.db";
+    readonly protected string connectionString = "Data source=./assets/data.db";
     public userMgmt(masterWindow master, Request req){
         InitializeComponent();
         this.master = master;
