@@ -33,7 +33,7 @@ public partial class loginPage : Page{
         }  
     }
     public void changeServer(object sender, RoutedEventArgs e){
-        File.Delete("config.txt");
+        File.Delete("./assets/config.txt");
         this.parent.Frame.Content = new SocketPage(this.parent);
     }
 }

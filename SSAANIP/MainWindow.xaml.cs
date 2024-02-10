@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +14,7 @@ public partial class MainWindow : Page {
     protected readonly updateData update;
     protected readonly Request req;
     protected masterWindow parent;
-    protected string connectionString = "Data source=data.db";
+    protected string connectionString = "Data source=./assets/data.db";
     protected string[] currentSongIds;
     protected int currentSongIndex;
     protected Queue<int> songIndex = new();
@@ -23,37 +24,40 @@ public partial class MainWindow : Page {
     protected bool isPaused = true;
     protected string playingSourceId;
     protected string playingSourceType;
-    protected bool updatePosition = false;
     protected bool isChangedByProgram = false;
     protected int currentSongDuration;
     protected int loopMode = 0;  //0=no loop, 1=regular loop, 2=loop current song
     protected bool fromQueue = false;
     protected string prioNextUp = null;
     protected string playlistEdited;
+    protected SemaphoreSlim slimSdr = new(1, 1);
     public MainWindow(masterWindow master,Request req) {
         InitializeComponent();
         parent = master;
         this.req = req;
         update = new(connectionString, req);
-        if (!File.Exists("data.db")) { //checks if file exists and if not creates one
-            File.Create("data.db").Close();            
-            using (SQLiteConnection conn = new(connectionString))
-            using (var cmd = conn.CreateCommand()) {
-                conn.Open(); 
-                cmd.CommandText = "CREATE TABLE \"tblAlbumArtistLink\" (\"linkId\"\tINTEGER,\"artistId\"TEXT,\"AlbumId\"TEXT,FOREIGN KEY(\"artistId\") REFERENCES \"tblArtists\"(\"artistId\"),PRIMARY KEY(\"linkId\" AUTOINCREMENT));" +
-                    "CREATE TABLE \"tblAlbumSongLink\" (\"linkid\"INTEGER,\"albumId\"TEXT,\"songId\"TEXT,\"songIndex\"INTEGER,PRIMARY KEY(\"linkid\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"albumId\") REFERENCES \"tblAlbums\"(\"albumId\"));" +
-                    "CREATE TABLE \"tblAlbums\" (\"albumId\"\tTEXT,\"albumName\"\tTEXT,\"albumDuration\"\tTEXT,PRIMARY KEY(\"albumId\"));" +
-                    "CREATE TABLE \"tblArtists\" (\"artistId\"\tTEXT,\"artistName\"\tTEXT,PRIMARY KEY(\"artistId\"));" +
-                    "CREATE TABLE \"tblPlaylistSongLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"songId\"\tTEXT,\"songIndex\"\tINTEGER,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"));" +
-                    "CREATE TABLE \"tblPlaylistUserLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"userName\"\tTEXT,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"),FOREIGN KEY(\"userName\") REFERENCES \"tblUsers\"(\"userName\"));" +
-                    "CREATE TABLE \"tblPlaylists\" (\"playlistId\"\tTEXT,\"playlistName\"\tTEXT,\"playlistDuration\"\tTEXT,\"isPublic\"\tTEXT,\"playlistDescription\"\tTEXT,PRIMARY KEY(\"playlistId\"));" +
-                    "CREATE TABLE \"tblSongs\" (\"songId\"\tTEXT,\"songName\"\tTEXT,\"songDuration\"\tTEXT,PRIMARY KEY(\"songId\"));" +
-                    "CREATE TABLE \"tblUsers\" (\"userName\"\tTEXT,\"isAdmin\"\tTEXT,PRIMARY KEY(\"userName\"));";
-                cmd.ExecuteScalar();
-            }
-        }
+        if (!File.Exists("./assets/data.db")) createDBFile(); //checks if file exists and if not creates one
         update.updateUsers(); 
         cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
+        displayArtists();
+    }
+    private async Task createDBFile(){
+        File.Create("./assets/data.db").Close();
+        using (SQLiteConnection conn = new(connectionString))
+        using (var cmd = conn.CreateCommand()){
+            conn.Open();
+            cmd.CommandText = "CREATE TABLE \"tblAlbumArtistLink\" (\"linkId\"\tINTEGER,\"artistId\"TEXT,\"AlbumId\"TEXT,FOREIGN KEY(\"artistId\") REFERENCES \"tblArtists\"(\"artistId\"),PRIMARY KEY(\"linkId\" AUTOINCREMENT));" +
+                "CREATE TABLE \"tblAlbumSongLink\" (\"linkid\"INTEGER,\"albumId\"TEXT,\"songId\"TEXT,\"songIndex\"INTEGER,PRIMARY KEY(\"linkid\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"albumId\") REFERENCES \"tblAlbums\"(\"albumId\"));" +
+                "CREATE TABLE \"tblAlbums\" (\"albumId\"\tTEXT,\"albumName\"\tTEXT,\"albumDuration\"\tTEXT,PRIMARY KEY(\"albumId\"));" +
+                "CREATE TABLE \"tblArtists\" (\"artistId\"\tTEXT,\"artistName\"\tTEXT,PRIMARY KEY(\"artistId\"));" +
+                "CREATE TABLE \"tblPlaylistSongLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"songId\"\tTEXT,\"songIndex\"\tINTEGER,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"songId\") REFERENCES \"tblSongs\"(\"songId\"),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"));" +
+                "CREATE TABLE \"tblPlaylistUserLink\" (\"linkId\"\tINTEGER,\"playlistId\"\tTEXT,\"userName\"\tTEXT,PRIMARY KEY(\"linkId\" AUTOINCREMENT),FOREIGN KEY(\"playlistId\") REFERENCES \"tblPlaylists\"(\"playlistId\"),FOREIGN KEY(\"userName\") REFERENCES \"tblUsers\"(\"userName\"));" +
+                "CREATE TABLE \"tblPlaylists\" (\"playlistId\"\tTEXT,\"playlistName\"\tTEXT,\"playlistDuration\"\tTEXT,\"isPublic\"\tTEXT,\"playlistDescription\"\tTEXT,PRIMARY KEY(\"playlistId\"));" +
+                "CREATE TABLE \"tblSongs\" (\"songId\"\tTEXT,\"songName\"\tTEXT,\"songDuration\"\tTEXT,PRIMARY KEY(\"songId\"));" +
+                "CREATE TABLE \"tblUsers\" (\"userName\"\tTEXT,\"isAdmin\"\tTEXT,PRIMARY KEY(\"userName\"));";
+            cmd.ExecuteScalar();
+        }
+        await update.updateDB();
         displayArtists();
     }
     private async Task nextSong(){
@@ -63,6 +67,7 @@ public partial class MainWindow : Page {
             mediaElement.Position = new TimeSpan(0);
         }
         else if(prioNextUp != null){
+            currentSongId = prioNextUp;
             mediaElement.Source = req.createURL("stream", "&id=" + prioNextUp);
             lblSongPlaying.Content = await getSongName(prioNextUp) + " | " + await getArtistNameFromSong(prioNextUp);
             prioNextUp = null;
@@ -83,8 +88,12 @@ public partial class MainWindow : Page {
         else if(songIndex.Count == 0 && loopMode == 1){
             playSongsFromList(getSongIdsFromSourceId(playingSourceId, playingSourceType));
         }
-        updatePosition = false;
-        updateSdr(currentSongId);
+        slimSdr.Dispose();
+        try{
+            await updateSdr(currentSongId);
+        }catch{
+            slimSdr.Release();
+        }
     }
     private void updateQueue(string[] newSongIds){
         if(newSongIds.Length > 0){
@@ -111,8 +120,9 @@ public partial class MainWindow : Page {
                 songIndex = shuffle(songIndex);
             }
             currentSongIds = songIds.ToArray();
-            await nextSong();
             mediaElement.Play();
+            btnPlayPause.Content = "||";
+            await nextSong();
         }
     }
     private async Task playSong(string songId, string sourceType){
@@ -137,7 +147,12 @@ public partial class MainWindow : Page {
         if (btnShuffleToggle.Background == Brushes.GreenYellow) songIndex = shuffle(songIndex);
         btnPlayPause.Content = "||";
         isPaused = false;
-        updateSdr(songId);
+        slimSdr.Dispose();
+        try{
+            await updateSdr(songId);
+        }catch{
+            slimSdr.Release();
+        }
     }
     private List<string> getSongIdsFromSourceId(string sourceId, string sourceType){
         List<string> songIds = new();    
@@ -171,9 +186,7 @@ public partial class MainWindow : Page {
             cmd.Parameters.Add(new("@id", tempSongId));
             currentSongDuration = Convert.ToInt32(cmd.ExecuteScalar());
         }
-        await Task.Delay(1000);
-        updatePosition = true;
-        while (currentPosition < currentSongDuration && updatePosition){
+        while (currentPosition < currentSongDuration){
             currentPosition = mediaElement.Position.TotalSeconds;
             lblTime.Content = $"({((int)currentPosition/60).ToString().PadLeft(2, '0')}:{((int)currentPosition%60).ToString().PadLeft(2, '0')}/{((int)currentSongDuration/60).ToString().PadLeft(2, '0')}:{((int)currentSongDuration%60).ToString().PadLeft(2, '0')})";
             var currentRatio = (currentPosition*100)/currentSongDuration;
@@ -249,7 +262,6 @@ public partial class MainWindow : Page {
         return sourceNames;
     }
     private void stop(){
-        updatePosition = false;
         mediaElement.Stop();
         songIndex.Clear();
         queue.Clear();
@@ -260,6 +272,9 @@ public partial class MainWindow : Page {
         mediaElement.Source = null;
         lblTime.Content = "";
         sdrPosition.Value = 0;
+        lsArtist.SelectedItem = null;
+        lsAlbums.ItemsSource = null;
+        lsSongs.ItemsSource = null;
         btnClearQueue.Visibility = Visibility.Hidden;
     }
     //Methods to display data
@@ -433,7 +448,7 @@ public partial class MainWindow : Page {
     }
     private void btnPlayPause_Click(object sender, RoutedEventArgs e){
         if(mediaElement.Source != null || queue.Count > 0){
-            if (isPaused) { 
+            if(isPaused){ 
                 mediaElement.Play();
                 btnPlayPause.Content = "||";
                 isPaused = false;
@@ -574,6 +589,7 @@ public partial class MainWindow : Page {
             btnQueuePlaylist.Visibility = Visibility.Hidden;
             btnPlayPlaylistSong.Visibility = Visibility.Hidden;
             btnQueuePlaylistSong.Visibility = Visibility.Hidden;
+            btnEditPlaylist.Visibility = Visibility.Hidden;
             lsPlaylists.Items.Clear();
             lsPlaylistsSongs.Items.Clear(); 
             displayPlaylists();

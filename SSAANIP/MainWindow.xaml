@@ -38,7 +38,6 @@
         <Button Name="btnPlaySongFromQueue" Content="⏵" Visibility="Hidden" HorizontalAlignment="Left" Height="20" Margin="693,105,0,0" VerticalAlignment="Top" Width="20" Click="btnPlaySongFromQueue_Click"/>
         <Button Name="btnUserManage" Content="Manage user" HorizontalAlignment="Left" Height="27" Margin="75,0,0,0" VerticalAlignment="Top" Width="82" Click="btnUserManage_Click"/>
         <Button Name="btnClearQueue" Content="Clear Queue" Visibility="Hidden" HorizontalAlignment="Left" Height="25" Margin="637,2,0,0" VerticalAlignment="Top" Width="75" Click="btnClearQueue_Click"/>
-
         <!--Album view-->
         <Grid Name="grdAlbums" Visibility="Visible" HorizontalAlignment="Left" Height="265" Margin="19,55,0,0" VerticalAlignment="Top" Width="669">
             <ListBox Name="lsArtist"  HorizontalAlignment="Left" Height="119" Margin="10,37,0,0" VerticalAlignment="Top" Width="150" SelectionChanged="lsArtist_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" />
@@ -53,7 +52,6 @@
             <Button Content="Queue selected song" Name="btnQueueSong" HorizontalAlignment="Left" Height="25" Margin="417,196,0,0" VerticalAlignment="Top" Width="124" Click="btnQueueSong_Click" Visibility="Hidden" />
             <Button Content="Add album to playlist" Name="btnAddAlbumToPlaylist" HorizontalAlignment="Left" Height="25" Margin="197,226,0,0" VerticalAlignment="Top" Width="124" Click="btnAddAlbumToPlaylist_Click" Visibility="Hidden"/>
             <Button Content="Add song to playlist" Name="btnAddSongToPlaylist" HorizontalAlignment="Left" Height="25" Margin="417,226,0,0" VerticalAlignment="Top" Width="124" Click="btnAddSongToPlaylist_Click" Visibility="Hidden"/>
-
         </Grid>
         <Button Name="btnPlaylistsToggle" Content="Show playlists" HorizontalAlignment="Left" Height="27" Margin="157,0,0,0" VerticalAlignment="Top" Width="90" Click="btnPlaylistsToggle_Click"/>
         <ComboBox Name="cobPlaylists" HorizontalAlignment="Left" Text="Playlist to add to" Height="27" Margin="247,0,0,0" VerticalAlignment="Top" Width="134" SelectionChanged="cobPlaylists_SelectionChanged" />
@@ -87,14 +85,13 @@
                 <TextBox Name="txtSongToAdd" HorizontalAlignment="Left" Height="20" Margin="10,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="150"/>
                 <Label Content="Add song" HorizontalAlignment="Left" Height="30" Margin="10,173,0,0" VerticalAlignment="Top" Width="64"/>
                 <Button Name="btnAddSong" Content="Add" HorizontalAlignment="Left" Height="18" Margin="10,226,0,0" VerticalAlignment="Top" Width="32" Click="btnAddSong_Click"/>
-
+                <Button Name="btnDeletePlaylist" Content="Delete playlist" HorizontalAlignment="Left" Height="22" Margin="174,191,0,0" VerticalAlignment="Top" Width="88" Click="btnDeletePlaylist_Click"/>
             </Grid>
             <Button Name="btnPlayPlaylist" Content="Play playlist" HorizontalAlignment="Left" Height="25" Margin="29,182,0,0" VerticalAlignment="Top" Width="125" Click="btnPlayPlaylist_Click"/>
             <Button Name="btnQueuePlaylist" Content="Queue playlist" HorizontalAlignment="Left" Height="25" Margin="29,212,0,0" VerticalAlignment="Top" Width="125" Click="btnQueuePlaylist_Click"/>
             <Button Name="btnPlayPlaylistSong" Content="Play song" HorizontalAlignment="Left" Height="25" Margin="215,182,0,0" VerticalAlignment="Top" Width="125" Click="btnPlayPlaylistSong_Click"/>
             <Button Name="btnQueuePlaylistSong" Content="Queue song" HorizontalAlignment="Left" Height="25" Margin="215,212,0,0" VerticalAlignment="Top" Width="125" Click="btnQueuePlaylistSong_Click"/>
             <Button Name="btnEditPlaylist" Content="Edit playlist" HorizontalAlignment="Left" Height="25" Margin="29,242,0,0" VerticalAlignment="Top" Width="125" Click="btnEditPlaylist_Click"/>
-            <Button Name="btnDeletePlaylist" Content="Delete playlist" HorizontalAlignment="Left" Height="22" Margin="576,232,0,0" VerticalAlignment="Top" Width="88" Click="btnDeletePlaylist_Click"/>
         </Grid>
     </Grid>
 </Page>

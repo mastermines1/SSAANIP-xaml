@@ -1,3 +1,3 @@
 socket=192.168.1.228:4533
-appName=DefaultName
+appName=Testing
 version=1.16.1

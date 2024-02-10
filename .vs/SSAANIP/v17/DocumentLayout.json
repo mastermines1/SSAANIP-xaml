@@ -7,20 +7,12 @@
       "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\master.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\master.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\getrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\getrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\updatedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\updatedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\usermgmt.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\usermgmt.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -31,8 +23,20 @@
       "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\usermgmt.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\usermgmt.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\usermgmt.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\updatedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\updatedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\socketpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\socketpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\master.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -41,10 +45,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\socketpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\socketpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|c:\\users\\miles_campbell\\source\\repos\\mastermines1\\ssaanip-xaml\\ssaanip\\master.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{AC1CB7E1-B1BE-46CB-9AC7-52670242AF75}|SSAANIP\\SSAANIP.csproj|solutionrelative:ssaanip\\master.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,68 +62,59 @@
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "SSAANIP\\MainWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\MainWindow.xaml.cs",
-              "RelativeToolTip": "SSAANIP\\MainWindow.xaml.cs",
-              "ViewState": "AQIAABAAAAAAAAAAAAAAACUAAAAzAAAA",
+              "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\MainWindow.xaml.cs*",
+              "RelativeToolTip": "SSAANIP\\MainWindow.xaml.cs*",
+              "ViewState": "AQIAAGEAAAAAAAAAAAAswHwAAAAdAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-02-09T18:02:28.582Z",
+              "WhenOpened": "2024-02-09T23:23:13.559Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "SSAANIP\\MainWindow.xaml",
-              "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\MainWindow.xaml",
-              "RelativeToolTip": "SSAANIP\\MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-01-21T15:26:10.56Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 1,
               "Title": "master.xaml",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\master.xaml",
               "RelativeDocumentMoniker": "SSAANIP\\master.xaml",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\master.xaml",
               "RelativeToolTip": "SSAANIP\\master.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2023-12-09T13:56:51.189Z"
+              "WhenOpened": "2023-12-09T13:56:51.189Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "master.xaml.cs",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\master.xaml.cs",
               "RelativeDocumentMoniker": "SSAANIP\\master.xaml.cs",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\master.xaml.cs",
               "RelativeToolTip": "SSAANIP\\master.xaml.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAaAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-12-09T13:56:51.194Z"
+              "WhenOpened": "2023-12-09T13:56:51.194Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "socketPage.xaml",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\socketPage.xaml",
               "RelativeDocumentMoniker": "SSAANIP\\socketPage.xaml",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\socketPage.xaml",
               "RelativeToolTip": "SSAANIP\\socketPage.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2023-12-09T13:56:51.154Z"
+              "WhenOpened": "2023-12-09T13:56:51.154Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "updateData.cs",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\updateData.cs",
               "RelativeDocumentMoniker": "SSAANIP\\updateData.cs",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\updateData.cs",
               "RelativeToolTip": "SSAANIP\\updateData.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAEAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAqwBsAAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-01-16T22:19:19.143Z",
               "EditorCaption": ""
@@ -136,33 +127,35 @@
               "RelativeDocumentMoniker": "SSAANIP\\socketPage.xaml.cs",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\socketPage.xaml.cs",
               "RelativeToolTip": "SSAANIP\\socketPage.xaml.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAYAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAApAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-12-09T13:56:51.126Z"
+              "WhenOpened": "2023-12-09T13:56:51.126Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "userMgmt.xaml.cs",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\userMgmt.xaml.cs",
               "RelativeDocumentMoniker": "SSAANIP\\userMgmt.xaml.cs",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\userMgmt.xaml.cs",
               "RelativeToolTip": "SSAANIP\\userMgmt.xaml.cs",
-              "ViewState": "AQIAAIgAAAAAAAAAAAAQwKUAAAAAAAAA",
+              "ViewState": "AQIAAE0AAAAAAAAAAADwv1wAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-01-07T18:38:33.104Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 4,
               "Title": "userMgmt.xaml",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\userMgmt.xaml",
               "RelativeDocumentMoniker": "SSAANIP\\userMgmt.xaml",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\userMgmt.xaml",
               "RelativeToolTip": "SSAANIP\\userMgmt.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-01-07T18:36:07.154Z"
+              "WhenOpened": "2024-01-07T18:36:07.154Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -172,20 +165,32 @@
               "RelativeDocumentMoniker": "SSAANIP\\getRequest.cs",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\getRequest.cs",
               "RelativeToolTip": "SSAANIP\\getRequest.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAAYwCEAAAAIAAAA",
+              "ViewState": "AQIAABYAAAAAAAAAAAAkwCsAAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2023-12-09T13:56:51.16Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "SSAANIP\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\MainWindow.xaml",
+              "RelativeToolTip": "SSAANIP\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-01-21T15:26:10.56Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "login.cs",
               "DocumentMoniker": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\login.cs",
               "RelativeDocumentMoniker": "SSAANIP\\login.cs",
               "ToolTip": "C:\\Users\\Miles_Campbell\\source\\repos\\mastermines1\\SSAANIP-xaml\\SSAANIP\\login.cs",
               "RelativeToolTip": "SSAANIP\\login.cs",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAwwBYAAABDAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABsAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2023-12-09T13:56:51.175Z",
               "EditorCaption": ""

@@ -16,7 +16,7 @@
         <Label Content="App name:" HorizontalAlignment="Left" Height="40" Margin="629,167,0,0" VerticalAlignment="Top" Width="145"/>
         <TextBox Name="namebox" HorizontalAlignment="Left" Height="29" Margin="702,167,0,0" TextWrapping="Wrap" Text="DefaultName" VerticalAlignment="Top" Width="82"/>
         <Label HorizontalAlignment="Left" Height="67" Margin="642,219,0,0" VerticalAlignment="Top" Width="142">
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Allows the server to identify your client.Can be changed in config.txt" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Allows the server to identify your client. Can be changed in config.txt" VerticalAlignment="Top"/>
         </Label>
     </Grid>
 </Page>
