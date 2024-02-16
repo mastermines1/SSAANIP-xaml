@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,7 +39,7 @@ public partial class MainWindow : Page {
         update = new(connectionString, req);
         if (!File.Exists("./assets/data.db")) createDBFile(); //checks if file exists and if not creates one
         update.updateUsers(); 
-        cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
+        cobPlaylists.ItemsSource = returnPlaylists();
         displayArtists();
     }
     private async Task createDBFile(){
@@ -122,7 +123,7 @@ public partial class MainWindow : Page {
             currentSongIds = songIds.ToArray();
             mediaElement.Play();
             btnPlayPause.Content = "||";
-            await nextSong();
+            nextSong();
         }
     }
     private async Task playSong(string songId, string sourceType){
@@ -142,17 +143,11 @@ public partial class MainWindow : Page {
             songIndex.Enqueue(i);
         }
         prioNextUp = songId;
-        await nextSong();
         mediaElement.Play();
         if (btnShuffleToggle.Background == Brushes.GreenYellow) songIndex = shuffle(songIndex);
         btnPlayPause.Content = "||";
         isPaused = false;
-        slimSdr.Dispose();
-        try{
-            await updateSdr(songId);
-        }catch{
-            slimSdr.Release();
-        }
+        await nextSong();
     }
     private List<string> getSongIdsFromSourceId(string sourceId, string sourceType){
         List<string> songIds = new();    
@@ -262,6 +257,7 @@ public partial class MainWindow : Page {
         return sourceNames;
     }
     private void stop(){
+        currentSongDuration = 0;
         mediaElement.Stop();
         songIndex.Clear();
         queue.Clear();
@@ -276,6 +272,7 @@ public partial class MainWindow : Page {
         lsAlbums.ItemsSource = null;
         lsSongs.ItemsSource = null;
         btnClearQueue.Visibility = Visibility.Hidden;
+        slimSdr.Release();
     }
     //Methods to display data
     private void displayArtists() {
@@ -303,18 +300,44 @@ public partial class MainWindow : Page {
                 using SQLiteDataReader reader = cmd.ExecuteReader();
                 while (reader.Read()){
                     songNames.Add(reader.GetString(0));
-                }
-                    
+                }  
             }
         }
         lsSongs.ItemsSource = songNames;
     }
-    private void displayPlaylists(){
-        List<string> playlistNames = getSourceNamesFromType("Playlist");
-        foreach(string playlistName in playlistNames){
-
-            lsPlaylists.Items.Add(playlistName);
+    private List<string> returnPlaylists(){
+        List<string> playlistIds = new();
+        List<string> playlistNames = new();
+        using (SQLiteConnection conn = new(connectionString))
+        using (var cmd = conn.CreateCommand()){
+            conn.Open();
+            cmd.CommandText = "SELECT playlistId FROM tblPlaylistUserLink WHERE userName = @username";
+            cmd.Parameters.Add(new("@username", req.username));
+            using SQLiteDataReader reader = cmd.ExecuteReader();
+            while (reader.Read()){
+                playlistIds.Add(reader.GetString(0));
+            }
         }
+        using (SQLiteConnection conn = new(connectionString))
+        using (var cmd = conn.CreateCommand()){
+            conn.Open();
+            cmd.CommandText = "SELECT playlistId FROM tblPlaylists WHERE isPublic = \"true\"";
+            using SQLiteDataReader reader = cmd.ExecuteReader();
+            while(reader.Read()){
+                string playlistId = reader.GetString(0);
+                if(!playlistIds.Contains(playlistId)) playlistIds.Add(playlistId);
+            }
+        }
+        foreach(string playlistId in playlistIds){
+            using (SQLiteConnection conn = new(connectionString))
+            using (var cmd = conn.CreateCommand()){
+                conn.Open();
+                cmd.CommandText = "SELECT playlistName FROM tblPlaylists WHERE playlistId = @id";
+                cmd.Parameters.Add(new("@id", playlistId));
+                playlistNames.Add(cmd.ExecuteScalar().ToString());
+            }
+        }
+        return playlistNames;
     }
     private async void btnUpdateDb_clicked(object sender, RoutedEventArgs e) {
         stop(); 
@@ -411,6 +434,7 @@ public partial class MainWindow : Page {
         foreach (string songId in songIds){
             queue.Enqueue(songId);
         }
+
         updateQueue(songIds.ToArray());
     }
     private void btnPlaySong_Click(object sender, RoutedEventArgs e){
@@ -511,12 +535,14 @@ public partial class MainWindow : Page {
             btnQueueDelete.Visibility = Visibility.Hidden;
             btnQueueDown.Visibility = Visibility.Hidden;
             btnPlaySongFromQueue.Visibility = Visibility.Hidden;
-            btnClearQueue.Visibility = Visibility.Hidden;
         }else{
             btnQueueUp.Visibility = Visibility.Visible;
             btnQueueDelete.Visibility = Visibility.Visible;
             btnQueueDown.Visibility = Visibility.Visible;
             btnPlaySongFromQueue.Visibility = Visibility.Visible;
+        }
+        if(lsQueue.Items.Count == 0){
+            btnClearQueue.Visibility = Visibility.Hidden;
         }
     }
     private void btnQueueUp_Click(object sender, RoutedEventArgs e){
@@ -591,8 +617,10 @@ public partial class MainWindow : Page {
             btnQueuePlaylistSong.Visibility = Visibility.Hidden;
             btnEditPlaylist.Visibility = Visibility.Hidden;
             lsPlaylists.Items.Clear();
-            lsPlaylistsSongs.Items.Clear(); 
-            displayPlaylists();
+            lsPlaylistsSongs.Items.Clear();
+            foreach (string playlist in returnPlaylists()){
+                lsPlaylists.Items.Add(playlist);
+            }
         }
     }
     private async void lsPlaylists_SelectionChanged(object sender, SelectionChangedEventArgs e){
@@ -643,7 +671,6 @@ public partial class MainWindow : Page {
         string playlistIsPublic = ckbIsPublic.IsChecked.Value.ToString();
         string playlistId = string.Empty;
         bool alrExists = false;
-
         using (SQLiteConnection conn = new(connectionString))
         using (var cmd = conn.CreateCommand()){
             conn.Open();
@@ -660,7 +687,6 @@ public partial class MainWindow : Page {
         }
         await req.sendRequestAsync("updatePlaylist", $"&playlistId={playlistId}&name={playlistName}&comment={playlistDescription}&public={playlistIsPublic}");
         IEnumerable<XElement> playlistData = await req.sendRequestAsync("getPlaylist", "&id=" + playlistId);
-
         if (!alrExists){
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
@@ -686,11 +712,11 @@ public partial class MainWindow : Page {
             using (SQLiteConnection conn = new(connectionString))
             using (var cmd = conn.CreateCommand()){
                 conn.Open();
-                cmd.CommandText = "UPDATE tblPlaylists SET playlistName=@name, isPublic=@isPublic, playlistDescription=@description WHERE playlistId = @id";
+                cmd.CommandText = "UPDATE tblPlaylists SET playlistName=@name,playlistDuration=@duration, isPublic=@isPublic, playlistDescription=@description WHERE playlistId = @id";
                 cmd.Parameters.Add(new("@id", playlistId));
                 cmd.Parameters.Add(new("@name", playlistName));
                 cmd.Parameters.Add(new("@duration", playlistData.Elements().First().Attribute("duration").Value));
-                cmd.Parameters.Add(new("@isPublic", playlistIsPublic));
+                cmd.Parameters.Add(new("@isPublic", playlistIsPublic.ToLower()));
                 cmd.Parameters.Add(new("@description", playlistDescription));
                 cmd.ExecuteScalar();
             }
@@ -742,8 +768,10 @@ public partial class MainWindow : Page {
         lsPlaylistsSongs.SelectedItem = null;
         lsPlaylists.Items.Clear();
         lsPlaylistsSongs.Items.Clear();
-        displayPlaylists();
-        cobPlaylists.ItemsSource = getSourceNamesFromType("Playlist");
+        foreach (string playlist in returnPlaylists()){
+            lsPlaylists.Items.Add(playlist);
+        }
+        cobPlaylists.ItemsSource = returnPlaylists();
         grdPlaylistEdit.Visibility = Visibility.Hidden;
     }
     private async void btnEditPlaylist_Click(object sender, RoutedEventArgs e){
@@ -756,6 +784,15 @@ public partial class MainWindow : Page {
             cmd.CommandText = "SELECT playlistDescription FROM tblPlaylists WHERE playlistName = @name";
             cmd.Parameters.Add(new("@name", lsPlaylists.SelectedItem));
             txtPlaylistDescription.Text = cmd.ExecuteScalar().ToString();
+        }
+        using (SQLiteConnection conn = new(connectionString))
+        using (var cmd = conn.CreateCommand()){
+            conn.Open();
+            cmd.CommandText = "SELECT isPublic FROM tblPlaylists WHERE playlistName = @name";
+            cmd.Parameters.Add(new("@name", lsPlaylists.SelectedItem.ToString()));
+            string result = cmd.ExecuteScalar().ToString();
+            if(result == "true") ckbIsPublic.IsChecked = true;
+            else if(result == "false") ckbIsPublic.IsChecked = false;
         }
         string playlistId = string.Empty;
         using (SQLiteConnection conn = new(connectionString))
@@ -897,6 +934,7 @@ public partial class MainWindow : Page {
                 cmd.ExecuteScalar();
             }
         }
+        
     }
     private async void btnAddSongToPlaylist_Click(object sender, RoutedEventArgs e){
         string playlistId = getSourceIdFromName(cobPlaylists.SelectedItem.ToString(), "Playlist");
@@ -917,6 +955,37 @@ public partial class MainWindow : Page {
             cmd.Parameters.Add(new("@playlistId", playlistId));
             cmd.Parameters.Add(new("@songId", songId));
             cmd.Parameters.Add(new("@index", index));
+            cmd.ExecuteScalar();
+        }
+    }
+    private void updateDurationOfPlaylist(string playlistId){
+        List<string> songIds = new();
+        int duration = new();
+        using (SQLiteConnection conn = new(connectionString))
+        using (var cmd = conn.CreateCommand()){
+            conn.Open();
+            cmd.CommandText = "SELECT songId FROM tblPlaylistSongLink WHERE playlistId = @id)";
+            cmd.Parameters.Add(new("@id", playlistId));
+            using SQLiteDataReader reader = cmd.ExecuteReader();
+            while(reader.Read()){
+                songIds.Add(reader.GetString(0));
+            }
+        }
+        foreach(string id in songIds){
+            using (SQLiteConnection conn = new(connectionString))
+            using (var cmd = conn.CreateCommand()){
+                conn.Open();
+                cmd.CommandText = "SELECT songDuration FROM tblSongs WHERE songId = @id";
+                cmd.Parameters.Add(new("@Id", id));
+                duration += Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+        using (SQLiteConnection conn = new(connectionString))
+        using (var cmd = conn.CreateCommand()){
+            conn.Open();
+            cmd.CommandText = "UPDATE tblPlaylists SET playlistDuration=@duration WHERE playlistId=@playlistId";
+            cmd.Parameters.Add(new("@playlistId", playlistId));
+            cmd.Parameters.Add(new("@duration", duration));
             cmd.ExecuteScalar();
         }
     }
@@ -941,7 +1010,9 @@ public partial class MainWindow : Page {
             lsPlaylistsSongs.SelectedItem = null;
             lsPlaylists.Items.Clear();
             lsPlaylistsSongs.Items.Clear();
-            displayPlaylists();
+            foreach(string playlist in returnPlaylists()){
+                lsPlaylists.Items.Add(playlist);
+            }
             grdAlbums.Visibility = Visibility.Hidden;
         }
     }
