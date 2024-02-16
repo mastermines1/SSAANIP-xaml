@@ -74,7 +74,7 @@ public partial class userMgmt : Page{
     }
     private async void btnAdmin_Click(object sender, RoutedEventArgs e){
         if(adminPanel.Visibility == Visibility.Visible){
-            adminPanel.Visibility = Visibility.Hidden;
+            adminPanel.Visibility = Visibility.Hidden; 
         }else{
             if(await confirmPassword(confirmPass)){
                 adminPanel.Visibility = Visibility.Visible;
