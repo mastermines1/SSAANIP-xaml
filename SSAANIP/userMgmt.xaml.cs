@@ -20,7 +20,7 @@ public partial class userMgmt : Page{
     }
     public async Task fetchUserInfo(){
         IEnumerable<XElement> userData = await req.sendRequestAsync("getUser", "&id=" + req.username);
-        lblUserName.Content = "Username: " + userData.Elements().First().FirstAttribute.Value;
+        lblUserName.Text = "Username: " + userData.Elements().First().FirstAttribute.Value;
         if (userData.Elements().First().Attribute("adminRole").Value == "true") btnAdmin.Visibility = Visibility.Visible;
     }
     public async Task<bool> confirmPassword(PasswordBox pwdBox){
@@ -43,7 +43,7 @@ public partial class userMgmt : Page{
                 using (SQLiteConnection conn = new(connectionString))
                 using (SQLiteCommand cmd = conn.CreateCommand()){
                     conn.Open();
-                    cmd.CommandText = "SELECT FROM tblUsers WHERE isAdmin = \"true\"";
+                    cmd.CommandText = "SELECT * FROM tblUsers WHERE isAdmin = \"true\"";
                     using SQLiteDataReader reader = cmd.ExecuteReader();
                     while(reader.Read()){
                         noOfAdmins ++;
@@ -51,7 +51,7 @@ public partial class userMgmt : Page{
                 }
                 if (noOfAdmins > 0){
                     if (MessageBox.Show("Are you sure? \n This is a permenant change.", "Confirm", MessageBoxButton.OKCancel) == MessageBoxResult.OK){
-                        await req.sendDeleteUserAsync("deleteUser");
+                        await req.sendDeleteUserAsync(req.username);
                         using (SQLiteConnection conn = new(connectionString))
                         using (var cmd = conn.CreateCommand()){
                             conn.Open();

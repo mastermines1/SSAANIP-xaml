@@ -8,13 +8,13 @@
       d:DesignHeight="414" d:DesignWidth="865"
       Background="White">
     <Grid Width="865" Height="414">
-        <Label Name="lblUserName" Content="Username: " HorizontalAlignment="Left" Height="25" Margin="32,41,0,0" VerticalAlignment="Top" Width="102"/>
+        <TextBox Name="lblUserName" IsReadOnly="True" BorderBrush="Transparent" Text="Username: " TextWrapping="Wrap" HorizontalAlignment="Left" Height="34" Margin="32,32,0,0" VerticalAlignment="Top" Width="102"/>
         <Button Name="btnLogout" Content="Logout" HorizontalAlignment="Left" Height="28" Margin="32,74,0,0" VerticalAlignment="Top" Width="102" Click="btnLogout_Click"/>
-        <Button Name="btnDeleteSelf" Content="Delete account" HorizontalAlignment="Left" Background="Red" Foreground="White" Height="35" Margin="32,116,0,0" VerticalAlignment="Top" Width="102" Click="btnDeleteSelf_Click"/>
-        <Button Name="btnAdmin" Visibility="Hidden" Content="Admin panel" HorizontalAlignment="Left" Height="38" Margin="32,156,0,0" VerticalAlignment="Top" Width="102" Click="btnAdmin_Click"/>
+        <Button Visibility="Hidden" Name="btnDeleteSelf" Content="Delete account" HorizontalAlignment="Left" Background="Red" Foreground="White" Height="35" Margin="32,116,0,0" VerticalAlignment="Top" Width="102" Click="btnDeleteSelf_Click"/>
+        <Button Name="btnAdmin" Visibility="Hidden" Content="Admin panel" HorizontalAlignment="Left" Height="38" Margin="32,116,0,0" VerticalAlignment="Top" Width="102" Click="btnAdmin_Click"/>
         <Button Name="btnback" Content="Back" HorizontalAlignment="Left" Height="22" Margin="10,340,0,0" VerticalAlignment="Top" Width="73" Click="btnback_Click"/>
         <PasswordBox Name="confirmPass" Visibility="Hidden" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="25" Margin="32,207,0,0" VerticalAlignment="Top" Width="102"/>
-        <TextBox IsReadOnly="True" BorderThickness="0" Name="lblConfirm" Text="" HorizontalAlignment="Left" Height="36" Margin="32,242,0,0" VerticalAlignment="Top" Width="102" TextWrapping="Wrap"/>
+        <TextBox IsReadOnly="True" BorderThickness="0" Name="lblConfirm" Text="" HorizontalAlignment="Left" Height="36" Margin="32,166,0,0" VerticalAlignment="Top" Width="102" TextWrapping="Wrap"/>
         <TextBox Name="txtNewPassword" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="28" Margin="150,74,0,0" TextWrapping="Wrap" Text="New Password" VerticalAlignment="Top" Width="112"/>
         <Label Content="Change password" HorizontalAlignment="Left" Height="28" Margin="150,41,0,0" VerticalAlignment="Top" Width="112"/>
         <Button Name="btnChangePassword" Content="Update" HorizontalAlignment="Left" Height="35" Margin="150,116,0,0" VerticalAlignment="Top" Width="112" Click="btnChangePassword_Click"/>

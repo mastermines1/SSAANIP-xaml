@@ -272,7 +272,6 @@ public partial class MainWindow : Page {
         lsAlbums.ItemsSource = null;
         lsSongs.ItemsSource = null;
         btnClearQueue.Visibility = Visibility.Hidden;
-        slimSdr.Release();
     }
     //Methods to display data
     private void displayArtists() {
