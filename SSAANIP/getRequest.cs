@@ -66,13 +66,12 @@ public class Request {
         }
     }
     public async Task sendDeleteUserAsync(string username) {
-        if (username == "self") username = this.username;
         HttpClient client = new();
         string token = await getTokenJsonAsync(socket);
         if (token != null) {
             string delete_user_url = $"http://{socket}/api/user/{await getIdJsonAsync(socket, token, username)}";
             client.DefaultRequestHeaders.Add("x-nd-authorization", "Bearer " + token);
-            await client.DeleteAsync(delete_user_url);
+            var test = await client.DeleteAsync(delete_user_url);
         }
     }
     public async Task sendUpdateUserAsync(string newUsername, string newPassword, string newIsAdmin) {
